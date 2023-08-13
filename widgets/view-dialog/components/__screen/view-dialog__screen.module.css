@@ -1,0 +1,60 @@
+.viewDialogScreen {
+  position: relative;
+  max-width: 700px;
+  border: 2px solid black;
+  margin: 0 auto;
+  width: 100%;
+  border-radius: 4px;
+  margin-top: 12px;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.viewDialogScreenMain {
+  height: calc(100vh - 26px - 80px - 10px - 70px);
+  display: flex;
+  flex-direction: column;
+}
+
+.viewDialogScreenDefaultMessage,
+.viewDialogScreenNothingFoundMessage,
+.viewDialogScreenMain {
+  width: 100%;
+}
+
+.viewDialogScreenDefaultMessageTitle,
+.viewDialogScreenNothingFoundMessageTitle {
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.viewDialogScreenDefaultMessageSubTitle,
+.viewDialogScreenNothingFoundMessageSubTitle {
+  margin-top: 14px;
+}
+
+.viewDialogScreenMainCount {
+  margin-bottom: 8px;
+}
+
+.viewDialogScreenMainHref,
+.viewDialogScreenMainPhone {
+  margin-bottom: 4px;
+}
+
+.viewDialogScreenMainSubTitle {
+  position: relative;
+
+  margin-bottom: 24px;
+}
+.viewDialogScreenMainSubTitle:after {
+  content: "";
+  position: absolute;
+  left: -12px;
+  bottom: -12px;
+  width: calc(100% + 24px);
+  height: 2px;
+  background: black;
+}

@@ -1,0 +1,82 @@
+.viewDialogSearch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%; 
+}
+
+.viewDialogInput {
+  border: 2px solid black;
+  border-radius: 4px;
+  padding: 12px;
+  flex: 1;
+  margin-right: 12px;
+  height: 66px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  font-size: 20px;
+  font-weight: 400;
+  background-color: white;
+  color: black;
+  flex: 1;
+}
+
+
+.viewDialogInput:disabled {
+  cursor: not-allowed;
+  background-color: white;
+  color: black;
+  border: 2px solid black;
+}
+
+.viewDialogInput:focus {
+  outline: none;
+  border: 2px solid black;
+}
+
+.viewDialogButton {
+  border: 2px solid black;
+  border-radius: 4px;
+  height: 66px;
+  width: 66px;
+  background-color: black;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color border color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewDialogSearchSvg {
+  color: black;
+
+  transform: scale(0.82);
+}
+
+.viewDialogButton:hover {
+  background-color: #333;
+  border: 2px solid #333;
+
+  .viewDialogSearchSvg {
+    color: #333;
+  }
+}
+
+.viewDialogButton:focus {
+  outline: none;
+}
+
+.viewDialogButton:disabled {
+  background-color: white;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.viewDialogButton:disabled:hover {
+  background-color: white;
+  color: #999;
+}

@@ -1,0 +1,56 @@
+/* view-dialog__buttons.module.css */
+
+.viewDialogButtons {
+  position: relative;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewDialogButtons:after {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: -12px;
+  width: calc(100% + 24px);
+  height: 2px;
+  background: black;
+}
+
+.viewDialogButtonsWrapper {
+  display: flex;
+}
+
+.viewDialogButtonsWrapper:nth-child(1) {
+  margin-bottom: 10px;
+}
+
+.viewDialogButtonsWrapper:nth-child(2) {
+  margin-bottom: 10px;
+}
+
+.viewDialogButton {
+  flex: 1;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  margin-right: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.viewDialogButton:hover {
+  background-color: #333;
+}
+
+.viewDialogButton:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.viewDialogButton:last-child {
+  margin-right: 0;
+}

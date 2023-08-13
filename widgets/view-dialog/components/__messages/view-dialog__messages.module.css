@@ -1,0 +1,44 @@
+/* view-dialog__messages.module.css */
+
+.dialogContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  overflow: hidden;
+  margin-right: -16px;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 16px;
+}
+
+.message {
+  display: inline-block;
+  max-width: calc(100% - 50px);
+  flex: 1;
+  margin-bottom: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.message:last-child {
+  margin-bottom: 0;
+}
+
+.messageRight {
+  align-self: flex-end;
+  background-color: #dcf8c6;
+  color: #333;
+}
+
+.messageLeft {
+  align-self: flex-start;
+  background-color: #f0f0f0;
+  color: #333;
+}

@@ -1,0 +1,22 @@
+.viewDialogHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 60px;
+  padding-left: 45px;
+  margin-bottom: 10px;
+}
+
+.blueBackground {
+  background-color: black;
+}
+
+.channelLink {
+  color: white;
+  text-decoration: none;
+  font-size: 22px;
+}
+
+.channelLink:hover {
+  text-decoration: underline;
+}
