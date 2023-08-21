@@ -30,14 +30,6 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
   return (
     <div className={classes.viewDialogButtons}>
       <div className={classes.viewDialogButtonsWrapper}>
-        {!dialog?.viewed && (
-          <button
-            onClick={() => postDialogueInfo({ viewed: true })}
-            className={classes.viewDialogButton}
-          >
-            Просмотрено
-          </button>
-        )}
         {!dialog?.blocked && (
           <button
             onClick={() => postDialogueInfo({ viewed: true,   blocked: true })}

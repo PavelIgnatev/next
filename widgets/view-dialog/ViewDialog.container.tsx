@@ -79,17 +79,28 @@ export const ViewDialogContainer = () => {
     }
   );
 
+  const {
+    mutate: postDialogueInfoWithoutSuccess,
+    isError: postDialogueInfoErrorWithoutSuccess,
+  } = useMutation((data: { blocked?: boolean; viewed?: boolean }) =>
+    currentId
+      ? FrontendApi.postDialogueInfo(currentId, data)
+      : Promise.resolve(null)
+  );
+
   const handleNextButtonClick = useCallback(() => {
     if (currentDialogIndex < (viewDialogIdsData?.length || 0) - 1) {
+      postDialogueInfoWithoutSuccess({ viewed: true });
       setCurrentDialogIndex((prev) => prev + 1);
     }
-  }, [currentDialogIndex, viewDialogIdsData]);
+  }, [currentDialogIndex, viewDialogIdsData, postDialogueInfoWithoutSuccess]);
 
   const handlePrevButtonClick = useCallback(() => {
     if (currentDialogIndex > 0) {
+      postDialogueInfoWithoutSuccess({ viewed: true });
       setCurrentDialogIndex((prev) => prev - 1);
     }
-  }, [currentDialogIndex]);
+  }, [currentDialogIndex, postDialogueInfoWithoutSuccess]);
 
   useEffect(() => {
     if (groupId) {
@@ -124,10 +135,10 @@ export const ViewDialogContainer = () => {
   }, [viewDialogInfoError]);
 
   useEffect(() => {
-    if (postDialogueInfoError) {
+    if (postDialogueInfoError || postDialogueInfoErrorWithoutSuccess) {
       toast.error("Произошла ошибка. Попробуйте еще раз.");
     }
-  }, [postDialogueInfoError]);
+  }, [postDialogueInfoError, postDialogueInfoErrorWithoutSuccess]);
 
   return (
     <ViewDialog
