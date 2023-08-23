@@ -20,7 +20,7 @@ class FrontendService {
     });
   }
 
-  postDialogueInfo(id: string, data: { blocked?: boolean; viewed?: boolean }) {
+  postDialogueInfo(id: string, data: { blocked?: boolean }) {
     return axios.post<void>(urls.dialogueInfo, { id, data });
   }
 }

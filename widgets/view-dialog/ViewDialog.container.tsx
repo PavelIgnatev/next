@@ -13,6 +13,15 @@ export const ViewDialogContainer = () => {
   const [onlyNew, setOnlyNew] = useState<boolean>(false);
   const [currentDialogIndex, setCurrentDialogIndex] = useState<number>(0);
 
+  const {
+    mutate: postDialogueInfoWithoutSuccess,
+    isError: postDialogueInfoErrorWithoutSuccess,
+  } = useMutation((data: { blocked?: boolean; viewed?: boolean }) =>
+    currentId
+      ? FrontendApi.postDialogueInfo(currentId, data)
+      : Promise.resolve(null)
+  );
+
   const handleViewDialogIdsSuccess = useCallback((data: Array<string>) => {
     if (data && data.length > 0) {
       setCurrentId(data[0]);
@@ -21,14 +30,25 @@ export const ViewDialogContainer = () => {
       setCurrentId(null);
     }
   }, []);
-  const handleChangeGroupId = useCallback((groupId: string) => {
-    setGroupId(groupId);
-  }, []);
-  const handleOnlyNewClick = useCallback(() => setOnlyNew((prev) => !prev), []);
-  const handleOnlyDialogClick = useCallback(
-    () => setOnlyDialog((prev) => !prev),
-    []
+  const handleChangeGroupId = useCallback(
+    (groupId: string) => {
+      {
+        postDialogueInfoWithoutSuccess({ viewed: true });
+        setGroupId(groupId);
+        setOnlyDialog(false);
+        setOnlyNew(false);
+      }
+    },
+    [postDialogueInfoWithoutSuccess]
   );
+  const handleOnlyNewClick = useCallback(() => {
+    postDialogueInfoWithoutSuccess({ viewed: true });
+    setOnlyNew((prev) => !prev);
+  }, [postDialogueInfoWithoutSuccess]);
+  const handleOnlyDialogClick = useCallback(() => {
+    postDialogueInfoWithoutSuccess({ viewed: true });
+    setOnlyDialog((prev) => !prev);
+  }, [postDialogueInfoWithoutSuccess]);
 
   const {
     data: viewDialogIdsData,
@@ -77,15 +97,6 @@ export const ViewDialogContainer = () => {
     {
       onSuccess: () => refetchViewDialogIds(),
     }
-  );
-
-  const {
-    mutate: postDialogueInfoWithoutSuccess,
-    isError: postDialogueInfoErrorWithoutSuccess,
-  } = useMutation((data: { blocked?: boolean; viewed?: boolean }) =>
-    currentId
-      ? FrontendApi.postDialogueInfo(currentId, data)
-      : Promise.resolve(null)
   );
 
   const handleNextButtonClick = useCallback(() => {

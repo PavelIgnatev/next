@@ -20,7 +20,7 @@ export interface ViewDialogProps {
   viewDialogInfoError: boolean;
   postDialogueInfoLoading: boolean;
 
-  postDialogueInfo: (data: { blocked?: boolean; viewed?: boolean }) => void;
+  postDialogueInfo: (data: { blocked?: boolean }) => void;
   onChangeGroupId: (groupId: string) => void;
   onOnlyNewClick: () => void;
   onOnlyDialogClick: () => void;

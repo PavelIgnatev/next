@@ -39,10 +39,7 @@ class BackendService {
     return dialogue || null;
   }
 
-  async postDialogue(
-    id: string,
-    data: { blocked?: boolean; viewed?: boolean }
-  ): Promise<void> {
+  async postDialogue(id: string, data: { blocked?: boolean }): Promise<void> {
     await this.connect();
 
     await this.collection?.updateOne(
