@@ -51,6 +51,23 @@
   justify-content: center;
 }
 
+.viewDialogStatisticsButton {
+  border: 2px solid black;
+  border-radius: 4px;
+  height: 66px;
+  width: 66px;
+  background-color: white;
+  color: #999;
+  cursor: not-allowed;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color border color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
 .viewDialogSearchSvg {
   color: black;
 
@@ -79,4 +96,17 @@
 .viewDialogButton:disabled:hover {
   background-color: white;
   color: #999;
+}
+
+.viewDialogSearchStatisticsSvg {
+  color: black;
+}
+
+.viewDialogStatisticsButton:hover {
+  background-color: black;
+  color: #fff;
+
+  .viewDialogSearchStatisticsSvg {
+    color: #fff;
+  }
 }

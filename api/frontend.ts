@@ -20,6 +20,12 @@ class FrontendService {
     });
   }
 
+  getDialogueMessages(groupId: string) {
+    return this.get<Array<Array<string>> | null>(urls.dialogueMessages, {
+      groupId,
+    });
+  }
+
   postDialogueInfo(id: string, data: { blocked?: boolean }) {
     return axios.post<void>(urls.dialogueInfo, { id, data });
   }

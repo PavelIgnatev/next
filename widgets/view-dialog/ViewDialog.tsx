@@ -5,9 +5,12 @@ import { ViewDialogHeader } from "./components/__header/view-dialog__header";
 import { Dialogue } from "../../@types/dialogue";
 
 import classes from "./view-dialog.module.css";
+import { ViewDialogStatistics } from "./components/__statistics/view-dialog__statistics";
 
 export interface ViewDialogProps {
   currentDialogIndex: number;
+  averageDialogDuration: number;
+  averageDialogDurationIfResponse: number;
 
   viewDialogIdsData?: Array<string> | null;
   viewDialogInfoData?: Dialogue | null;
@@ -19,6 +22,8 @@ export interface ViewDialogProps {
   viewDialogIdsError: boolean;
   viewDialogInfoError: boolean;
   postDialogueInfoLoading: boolean;
+  visibleStatistics: boolean;
+  visibleStatisticsInfo: boolean;
 
   postDialogueInfo: (data: { blocked?: boolean }) => void;
   onChangeGroupId: (groupId: string) => void;
@@ -26,11 +31,14 @@ export interface ViewDialogProps {
   onOnlyDialogClick: () => void;
   onNextButtonClick: () => void;
   onPrevButtonClick: () => void;
+  onStatistics: () => void;
 }
 
 export const ViewDialog = (props: ViewDialogProps) => {
   const {
     currentDialogIndex,
+    averageDialogDuration,
+    averageDialogDurationIfResponse,
     onlyDialog,
     onlyNew,
     onChangeGroupId,
@@ -38,11 +46,14 @@ export const ViewDialog = (props: ViewDialogProps) => {
     viewDialogIdsData,
     viewDialogInfoData,
     viewDialogInfoLoading,
+    visibleStatisticsInfo,
     onOnlyNewClick,
     onOnlyDialogClick,
     onNextButtonClick,
     onPrevButtonClick,
     postDialogueInfo,
+    visibleStatistics,
+    onStatistics,
   } = props;
 
   return (
@@ -51,21 +62,30 @@ export const ViewDialog = (props: ViewDialogProps) => {
       <ViewDialogSearch
         onSearch={onChangeGroupId}
         loading={viewDialogIdsLoading || viewDialogInfoLoading}
+        visibleStatistics={visibleStatistics}
+        onStatistics={onStatistics}
       />
-      <ViewDialogScreen
-        onlyNew={onlyNew}
-        onlyDialog={onlyDialog}
-        dialogIds={viewDialogIdsData}
-        dialog={viewDialogInfoData}
-        dialogIdsLoading={viewDialogIdsLoading}
-        dialogLoading={viewDialogInfoLoading}
-        onOnlyNewClick={onOnlyNewClick}
-        onOnlyDialogClick={onOnlyDialogClick}
-        dialogIndex={currentDialogIndex}
-        onNextButtonClick={onNextButtonClick}
-        onPrevButtonClick={onPrevButtonClick}
-        postDialogueInfo={postDialogueInfo}
-      />
+      {!visibleStatisticsInfo ? (
+        <ViewDialogScreen
+          onlyNew={onlyNew}
+          onlyDialog={onlyDialog}
+          dialogIds={viewDialogIdsData}
+          dialog={viewDialogInfoData}
+          dialogIdsLoading={viewDialogIdsLoading}
+          dialogLoading={viewDialogInfoLoading}
+          onOnlyNewClick={onOnlyNewClick}
+          onOnlyDialogClick={onOnlyDialogClick}
+          dialogIndex={currentDialogIndex}
+          onNextButtonClick={onNextButtonClick}
+          onPrevButtonClick={onPrevButtonClick}
+          postDialogueInfo={postDialogueInfo}
+        />
+      ) : (
+        <ViewDialogStatistics
+          averageDialogDuration={averageDialogDuration}
+          averageDialogDurationIfResponse={averageDialogDurationIfResponse}
+        />
+      )}
     </div>
   );
 };

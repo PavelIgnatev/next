@@ -1,10 +1,28 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
 
 import { ViewDialog } from "./ViewDialog";
 import FrontendApi from "../../api/frontend";
-import { Dialogue } from "../../@types/dialogue";
+
+function avgMsgCount(arrays: string[][], includeLenOne = true) {
+  const result = arrays.reduce(
+    (acc, array) => {
+      if (array.length > 1 || includeLenOne) {
+        acc.totalMsgCount += array.length;
+        acc.totalArraysCount++;
+      }
+      return acc;
+    },
+    { totalMsgCount: 0, totalArraysCount: 0 }
+  );
+
+  if (result.totalArraysCount === 0) {
+    return 0;
+  }
+
+  return result.totalMsgCount / result.totalArraysCount;
+}
 
 export const ViewDialogContainer = () => {
   const [groupId, setGroupId] = useState<string | null>(null);
@@ -12,6 +30,8 @@ export const ViewDialogContainer = () => {
   const [onlyDialog, setOnlyDialog] = useState<boolean>(false);
   const [onlyNew, setOnlyNew] = useState<boolean>(false);
   const [currentDialogIndex, setCurrentDialogIndex] = useState<number>(0);
+  const [visibleStatisticsInfo, setVisibleStatisticsInfo] =
+    useState<boolean>(false);
 
   const {
     mutate: postDialogueInfoWithoutSuccess,
@@ -69,6 +89,22 @@ export const ViewDialogContainer = () => {
   );
 
   const {
+    data: viewDialogMessages,
+    isFetching: viewDialogMessagesLoading,
+    isError: viewDialogMessagesError,
+  } = useQuery(
+    "dialogueMessages",
+    () =>
+      groupId ? FrontendApi.getDialogueMessages(groupId) : Promise.resolve([]),
+    {
+      enabled: !!groupId,
+      staleTime: Infinity,
+    }
+  );
+
+  console.log(viewDialogMessages);
+
+  const {
     data: viewDialogInfoData,
     isFetching: viewDialogInfoLoading,
     isError: viewDialogInfoError,
@@ -112,6 +148,33 @@ export const ViewDialogContainer = () => {
       setCurrentDialogIndex((prev) => prev - 1);
     }
   }, [currentDialogIndex, postDialogueInfoWithoutSuccess]);
+
+  const visibleStatistics = useMemo(
+    () =>
+      Boolean(
+        !viewDialogMessagesLoading &&
+          viewDialogMessages &&
+          viewDialogMessages.length > 0 &&
+          !viewDialogMessagesError
+      ),
+    [viewDialogMessagesLoading, viewDialogMessages, viewDialogMessagesError]
+  );
+
+  const averageDialogDuration = useMemo(() => {
+    if (!visibleStatistics || !Array.isArray(viewDialogMessages)) {
+      return 0;
+    }
+
+    return avgMsgCount(viewDialogMessages, true);
+  }, [visibleStatistics, viewDialogMessages]);
+
+  const averageDialogDurationIfResponse = useMemo(() => {
+    if (!visibleStatistics || !Array.isArray(viewDialogMessages)) {
+      return 0;
+    }
+
+    return avgMsgCount(viewDialogMessages, false);
+  }, [visibleStatistics, viewDialogMessages]);
 
   useEffect(() => {
     if (groupId) {
@@ -169,6 +232,13 @@ export const ViewDialogContainer = () => {
       onOnlyDialogClick={handleOnlyDialogClick}
       onNextButtonClick={handleNextButtonClick}
       onPrevButtonClick={handlePrevButtonClick}
+      visibleStatistics={visibleStatistics}
+      visibleStatisticsInfo={visibleStatisticsInfo}
+      onStatistics={() => {
+        setVisibleStatisticsInfo((prev) => !prev);
+      }}
+      averageDialogDuration={averageDialogDuration}
+      averageDialogDurationIfResponse={averageDialogDurationIfResponse}
     />
   );
 };

@@ -3,14 +3,18 @@ import { MagnifyingGlass } from "react-loader-spinner";
 
 import classes from "./view-dialog__search.module.css";
 import { ViewDialogSvg } from "../__svg/view-dialog__svg";
+import { ViewDialogStatisticsSvg } from "../__statistics-svg/view-dialog__svg";
 
 export interface ViewDialogSearchProps {
   loading: boolean;
+  visibleStatistics: boolean;
+
   onSearch: (groupId: string) => void;
+  onStatistics: () => void;
 }
 
 export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
-  const { onSearch, loading } = props;
+  const { loading, visibleStatistics, onStatistics, onSearch } = props;
 
   const [currentGroupId, setCurrentGroupId] = useState("");
 
@@ -42,6 +46,16 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
         id="search"
         placeholder="Ваш идентификатор"
       />
+      {visibleStatistics && (
+        <button
+          onClick={onStatistics}
+          className={classes.viewDialogStatisticsButton}
+        >
+          <ViewDialogStatisticsSvg
+            className={classes.viewDialogSearchStatisticsSvg}
+          />
+        </button>
+      )}
       <button
         type="submit"
         disabled={loading}

@@ -73,6 +73,18 @@ class BackendService {
     const ids = await this.collection?.distinct("_id", query);
     return ids || [];
   }
+
+  async getMessagesByGroupId(groupId: number): Promise<string[][]> {
+    await this.connect();
+
+    const dialogues: Dialogue[] = await this.collection
+      ?.find({ groupId })
+      .toArray();
+
+    const messages = dialogues?.map((dialogue) => dialogue?.messages ?? []);
+
+    return messages || [];
+  }
 }
 
 const BackendApi = new BackendService();
