@@ -39,7 +39,7 @@ export const ParsingOptimazerScreen = (props: ParsingOptimazerScreenProps) => {
         className={classes.labelField}
         style={{ marginTop: "10px" }}
       >
-        Описание компании (до 1500 символов)
+        Описание оффера (до 1500 символов)
       </label>
       <textarea
         value={companyDescription}
