@@ -74,16 +74,12 @@ class BackendService {
     return ids || [];
   }
 
-  async getMessagesByGroupId(groupId: number): Promise<string[][]> {
+  async getDialoguesByGroupId(groupId: number): Promise<Dialogue[]> {
     await this.connect();
 
-    const dialogues: Dialogue[] = await this.collection
-      ?.find({ groupId })
-      .toArray();
+    const result = await this.collection?.find({ groupId }).toArray();
 
-    const messages = dialogues?.map((dialogue) => dialogue?.messages ?? []);
-
-    return messages || [];
+    return result || [];
   }
 }
 

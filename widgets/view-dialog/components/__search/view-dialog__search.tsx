@@ -1,21 +1,30 @@
 import { useState } from "react";
-import { MagnifyingGlass } from "react-loader-spinner";
+import { MagnifyingGlass, ColorRing } from "react-loader-spinner";
 
 import classes from "./view-dialog__search.module.css";
 import { ViewDialogSvg } from "../__svg/view-dialog__svg";
 import { ViewDialogStatisticsSvg } from "../__statistics-svg/view-dialog__svg";
+import { Dialogue } from "../../../../@types/dialogue";
 
 export interface ViewDialogSearchProps {
   loading: boolean;
   visibleStatistics: boolean;
+  dialog?: Dialogue | null;
+  dialogIds?: Array<string> | null;
 
   onSearch: (groupId: string) => void;
   onStatistics: () => void;
 }
 
 export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
-  const { loading, visibleStatistics, onStatistics, onSearch } = props;
-
+  const {
+    loading,
+    visibleStatistics,
+    dialog,
+    dialogIds,
+    onStatistics,
+    onSearch,
+  } = props;
   const [currentGroupId, setCurrentGroupId] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,16 +55,26 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
         id="search"
         placeholder="Ваш идентификатор"
       />
-      {visibleStatistics && (
+      {dialog && dialogIds && dialogIds.length > 0 && (
         <button
+          disabled={!visibleStatistics}
           onClick={onStatistics}
           className={classes.viewDialogStatisticsButton}
         >
-          <ViewDialogStatisticsSvg
-            className={classes.viewDialogSearchStatisticsSvg}
-          />
+          {visibleStatistics ? (
+            <ViewDialogStatisticsSvg
+              className={classes.viewDialogSearchStatisticsSvg}
+            />
+          ) : (
+            <ColorRing
+              height={66}
+              width={66}
+              colors={["orange", "orange", "orange", "orange", "orange"]}
+            />
+          )}
         </button>
       )}
+
       <button
         type="submit"
         disabled={loading}

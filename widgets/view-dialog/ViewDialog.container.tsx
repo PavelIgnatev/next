@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 import { ViewDialog } from "./ViewDialog";
 import FrontendApi from "../../api/frontend";
+import { Dialogue } from "../../@types/dialogue";
 
 function avgMsgCount(arrays: string[][], includeLenOne = true) {
   const result = arrays.reduce(
@@ -52,12 +53,11 @@ export const ViewDialogContainer = () => {
   }, []);
   const handleChangeGroupId = useCallback(
     (groupId: string) => {
-      {
-        postDialogueInfoWithoutSuccess({ viewed: true });
-        setGroupId(groupId);
-        setOnlyDialog(false);
-        setOnlyNew(false);
-      }
+      setVisibleStatisticsInfo(false);
+      postDialogueInfoWithoutSuccess({ viewed: true });
+      setGroupId(groupId);
+      setOnlyDialog(false);
+      setOnlyNew(false);
     },
     [postDialogueInfoWithoutSuccess]
   );
@@ -89,20 +89,18 @@ export const ViewDialogContainer = () => {
   );
 
   const {
-    data: viewDialogMessages,
-    isFetching: viewDialogMessagesLoading,
-    isError: viewDialogMessagesError,
+    data: viewDialogs,
+    isFetching: viewDialogsLoading,
+    isError: viewDialogsError,
+    refetch: refetchViewDialogs,
   } = useQuery(
     "dialogueMessages",
-    () =>
-      groupId ? FrontendApi.getDialogueMessages(groupId) : Promise.resolve([]),
+    () => (groupId ? FrontendApi.getDialogues(groupId) : Promise.resolve([])),
     {
       enabled: !!groupId,
       staleTime: Infinity,
     }
   );
-
-  console.log(viewDialogMessages);
 
   const {
     data: viewDialogInfoData,
@@ -152,35 +150,70 @@ export const ViewDialogContainer = () => {
   const visibleStatistics = useMemo(
     () =>
       Boolean(
-        !viewDialogMessagesLoading &&
-          viewDialogMessages &&
-          viewDialogMessages.length > 0 &&
-          !viewDialogMessagesError
+        !viewDialogsLoading &&
+          viewDialogs &&
+          viewDialogs.length > 0 &&
+          !viewDialogsError
       ),
-    [viewDialogMessagesLoading, viewDialogMessages, viewDialogMessagesError]
+    [viewDialogsLoading, viewDialogs, viewDialogsError]
   );
+  const statisticsByDay = useMemo(() => {
+    if (!visibleStatistics || !viewDialogs) {
+      return {};
+    }
+
+    return viewDialogs.reduce<{ [key: string]: Dialogue[] }>((acc, cur) => {
+      const { dateCreated } = cur;
+      const date = new Date(dateCreated);
+      const day = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      ).getTime();
+
+      if (!acc[day]) {
+        acc[day] = [];
+      }
+
+      acc[day].push(cur);
+
+      return acc;
+    }, {});
+  }, [visibleStatistics, viewDialogs]);
 
   const averageDialogDuration = useMemo(() => {
-    if (!visibleStatistics || !Array.isArray(viewDialogMessages)) {
+    if (!visibleStatistics || !viewDialogs) {
       return 0;
     }
 
-    return avgMsgCount(viewDialogMessages, true);
-  }, [visibleStatistics, viewDialogMessages]);
+    return avgMsgCount(
+      viewDialogs.map((dialog) => dialog?.messages ?? []),
+      true
+    );
+  }, [visibleStatistics, viewDialogs]);
 
   const averageDialogDurationIfResponse = useMemo(() => {
-    if (!visibleStatistics || !Array.isArray(viewDialogMessages)) {
+    if (!visibleStatistics || !viewDialogs) {
       return 0;
     }
 
-    return avgMsgCount(viewDialogMessages, false);
-  }, [visibleStatistics, viewDialogMessages]);
+    return avgMsgCount(
+      viewDialogs.map((dialog) => dialog?.messages ?? []),
+      false
+    );
+  }, [visibleStatistics, viewDialogs]);
 
   useEffect(() => {
     if (groupId) {
       refetchViewDialogIds();
     }
   }, [groupId, onlyDialog, onlyNew, refetchViewDialogIds]);
+
+  useEffect(() => {
+    if (groupId) {
+      refetchViewDialogs();
+    }
+  }, [groupId, refetchViewDialogs]);
 
   useEffect(() => {
     if (currentId) {
@@ -233,6 +266,7 @@ export const ViewDialogContainer = () => {
       onNextButtonClick={handleNextButtonClick}
       onPrevButtonClick={handlePrevButtonClick}
       visibleStatistics={visibleStatistics}
+      statisticsByDay={statisticsByDay}
       visibleStatisticsInfo={visibleStatisticsInfo}
       onStatistics={() => {
         setVisibleStatisticsInfo((prev) => !prev);

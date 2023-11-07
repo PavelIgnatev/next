@@ -10,6 +10,6 @@ export interface Dialogue {
   title?: string;
   viewed?: boolean;
 
-  dateCreated: string;
-  dateUpdated: string;
+  dateCreated: Date;
+  dateUpdated: Date;
 }

@@ -14,6 +14,7 @@ export interface ViewDialogProps {
 
   viewDialogIdsData?: Array<string> | null;
   viewDialogInfoData?: Dialogue | null;
+  statisticsByDay: { [key: string]: Dialogue[] };
 
   onlyDialog: boolean;
   onlyNew: boolean;
@@ -41,6 +42,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
     averageDialogDurationIfResponse,
     onlyDialog,
     onlyNew,
+    statisticsByDay,
     onChangeGroupId,
     viewDialogIdsLoading,
     viewDialogIdsData,
@@ -64,6 +66,8 @@ export const ViewDialog = (props: ViewDialogProps) => {
         loading={viewDialogIdsLoading || viewDialogInfoLoading}
         visibleStatistics={visibleStatistics}
         onStatistics={onStatistics}
+        dialog={viewDialogInfoData}
+        dialogIds={viewDialogIdsData}
       />
       {!visibleStatisticsInfo ? (
         <ViewDialogScreen
@@ -84,6 +88,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
         <ViewDialogStatistics
           averageDialogDuration={averageDialogDuration}
           averageDialogDurationIfResponse={averageDialogDurationIfResponse}
+          statisticsByDay={statisticsByDay}
         />
       )}
     </div>

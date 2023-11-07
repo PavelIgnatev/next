@@ -20,8 +20,8 @@ class FrontendService {
     });
   }
 
-  getDialogueMessages(groupId: string) {
-    return this.get<Array<Array<string>> | null>(urls.dialogueMessages, {
+  getDialogues(groupId: string) {
+    return this.get<Array<Dialogue> | null>(urls.dialogues, {
       groupId,
     });
   }
