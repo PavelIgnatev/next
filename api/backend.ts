@@ -1,3 +1,4 @@
+import axios from "axios";
 const { MongoClient, Db, Collection, ObjectId } = require("mongodb");
 import { config as dotenvConfig } from "dotenv";
 
@@ -80,6 +81,16 @@ class BackendService {
     const result = await this.collection?.find({ groupId }).toArray();
 
     return result || [];
+  }
+
+  async generateLLM(dialogue: Array<string>): Promise<string> {
+    const apiUrl = "http://194.135.25.158/answer/";
+
+    const { data }: { data: string } = await axios.post(apiUrl, {
+      dialogue,
+    });
+
+    return data;
   }
 }
 

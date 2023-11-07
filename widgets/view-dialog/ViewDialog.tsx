@@ -1,11 +1,10 @@
 import { ViewDialogScreen } from "./components/__screen/view-dialog__screen";
 import { ViewDialogSearch } from "./components/__search/view-dialog__search";
-import { ViewDialogHeader } from "./components/__header/view-dialog__header";
+import { ViewDialogStatistics } from "./components/__statistics/view-dialog__statistics";
+import { Header } from "../header/header";
 
 import { Dialogue } from "../../@types/dialogue";
-
 import classes from "./view-dialog.module.css";
-import { ViewDialogStatistics } from "./components/__statistics/view-dialog__statistics";
 
 export interface ViewDialogProps {
   currentDialogIndex: number;
@@ -62,7 +61,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
 
   return (
     <div className={classes.viewDialog}>
-      <ViewDialogHeader />
+      <Header />
       <ViewDialogSearch
         onSearch={onChangeGroupId}
         loading={viewDialogIdsLoading || viewDialogInfoLoading}
