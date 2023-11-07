@@ -209,10 +209,11 @@ export const ViewDialogContainer = () => {
     }
 
     return (
-      viewDialogs.length /
-      viewDialogs.filter(
+      (viewDialogs.filter(
         (dialog) => dialog.messages && dialog.messages.length > 1
-      ).length
+      ).length /
+        viewDialogs.length) *
+      100
     );
   }, [visibleStatistics, viewDialogs]);
 

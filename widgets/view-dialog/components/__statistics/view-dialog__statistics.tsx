@@ -34,8 +34,8 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
         name: new Date(Number(date)).toLocaleDateString(),
         "Количество сообщений": messagesLength,
         "Количество диалогов": dialoguesLength,
-        "Коэффициент сообщений к диалогу (по дню)": Number(
-          messagesLength / dialoguesLength
+        "Процент диалогов в сообщениях (по дню)": Number(
+          (dialoguesLength / messagesLength) * 100
         ).toFixed(2),
       });
     }
@@ -55,7 +55,7 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
           {averageDialogDurationIfResponse.toFixed(2)}
         </div>
         <div>
-          Коэффициент сообщения к диалогу (глобально):&nbsp;
+          Процент диалогов в сообщениях (глобально):&nbsp;
           {messagesToDialog.toFixed(2)}
         </div>
         <BarChart
@@ -70,7 +70,7 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
           <Bar dataKey="Количество сообщений" fill="#7873e6" />
           <Bar dataKey="Количество диалогов" fill="#d3792c" />
           <Bar
-            dataKey="Коэффициент сообщений к диалогу (по дню)"
+            dataKey="Процент диалогов в сообщениях (по дню)"
             fill="#ed2929"
           />
         </BarChart>
