@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Line } from "recharts";
 import { useMemo } from "react";
 import useResizeObserver from "use-resize-observer";
 
@@ -25,13 +25,18 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
     const data = [];
 
     for (const [date, dialogues] of Object.entries(statisticsByDay)) {
+      const messagesLength = dialogues.length;
+      const dialoguesLength = dialogues.filter(
+        (dialogue) => dialogue.messages?.length && dialogue.messages.length > 1
+      ).length;
+
       data.push({
         name: new Date(Number(date)).toLocaleDateString(),
-        "Количество сообщений": dialogues.length,
-        "Количество диалогов": dialogues.filter(
-          (dialogue) =>
-            dialogue.messages?.length && dialogue.messages.length > 1
-        ).length,
+        "Количество сообщений": messagesLength,
+        "Количество диалогов": dialoguesLength,
+        "Коэффициент сообщений к диалогу (по дню)": Number(
+          messagesLength / dialoguesLength
+        ).toFixed(2),
       });
     }
 
@@ -50,7 +55,7 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
           {averageDialogDurationIfResponse.toFixed(2)}
         </div>
         <div>
-          Коэффициент сообщения к диалогу:&nbsp;
+          Коэффициент сообщения к диалогу (глобально):&nbsp;
           {messagesToDialog.toFixed(2)}
         </div>
         <BarChart
@@ -64,6 +69,10 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
           <Tooltip />
           <Bar dataKey="Количество сообщений" fill="#7873e6" />
           <Bar dataKey="Количество диалогов" fill="#d3792c" />
+          <Bar
+            dataKey="Коэффициент сообщений к диалогу (по дню)"
+            fill="#ed2929"
+          />
         </BarChart>
       </div>
     </div>
