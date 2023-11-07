@@ -8,6 +8,7 @@ import classes from "./view-dialog__statistics.module.css";
 export interface ViewDialogStatisticsProps {
   averageDialogDuration: number;
   averageDialogDurationIfResponse: number;
+  messagesToDialog: number;
   statisticsByDay: { [key: string]: Dialogue[] };
 }
 
@@ -15,6 +16,7 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
   const {
     averageDialogDuration,
     averageDialogDurationIfResponse,
+    messagesToDialog,
     statisticsByDay,
   } = props;
   const { ref, width = 1 } = useResizeObserver();
@@ -46,6 +48,10 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
         <div>
           Средняя продолжительность диалога (в случае ответа):&nbsp;
           {averageDialogDurationIfResponse.toFixed(2)}
+        </div>
+        <div>
+          Коэффициент сообщения к диалогу:&nbsp;
+          {messagesToDialog.toFixed(2)}
         </div>
         <BarChart
           width={width}

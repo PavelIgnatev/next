@@ -11,6 +11,7 @@ export interface ViewDialogProps {
   currentDialogIndex: number;
   averageDialogDuration: number;
   averageDialogDurationIfResponse: number;
+  messagesToDialog: number
 
   viewDialogIdsData?: Array<string> | null;
   viewDialogInfoData?: Dialogue | null;
@@ -40,6 +41,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
     currentDialogIndex,
     averageDialogDuration,
     averageDialogDurationIfResponse,
+    messagesToDialog,
     onlyDialog,
     onlyNew,
     statisticsByDay,
@@ -89,6 +91,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
           averageDialogDuration={averageDialogDuration}
           averageDialogDurationIfResponse={averageDialogDurationIfResponse}
           statisticsByDay={statisticsByDay}
+          messagesToDialog={messagesToDialog}
         />
       )}
     </div>

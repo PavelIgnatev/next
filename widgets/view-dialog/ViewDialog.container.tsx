@@ -203,6 +203,19 @@ export const ViewDialogContainer = () => {
     );
   }, [visibleStatistics, viewDialogs]);
 
+  const messagesToDialog = useMemo(() => {
+    if (!visibleStatistics || !viewDialogs) {
+      return 0;
+    }
+
+    return (
+      viewDialogs.length /
+      viewDialogs.filter(
+        (dialog) => dialog.messages && dialog.messages.length > 1
+      ).length
+    );
+  }, [visibleStatistics, viewDialogs]);
+
   useEffect(() => {
     if (groupId) {
       refetchViewDialogIds();
@@ -273,6 +286,7 @@ export const ViewDialogContainer = () => {
       }}
       averageDialogDuration={averageDialogDuration}
       averageDialogDurationIfResponse={averageDialogDurationIfResponse}
+      messagesToDialog={messagesToDialog}
     />
   );
 };
