@@ -32,7 +32,10 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
       <div className={classes.viewDialogButtonsWrapper}>
         {!dialog?.blocked && (
           <button
-            onClick={() => postDialogueInfo({ viewed: true, blocked: true })}
+            onClick={() => {
+              postDialogueInfo({ viewed: true, blocked: true });
+              onNextButtonClick();
+            }}
             className={classes.viewDialogButton}
           >
             Заблокировать
