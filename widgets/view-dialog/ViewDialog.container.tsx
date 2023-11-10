@@ -123,14 +123,10 @@ export const ViewDialogContainer = () => {
     mutate: postDialogueInfo,
     isError: postDialogueInfoError,
     isLoading: postDialogueInfoLoading,
-  } = useMutation(
-    (data: { blocked?: boolean; viewed?: boolean }) =>
-      currentId
-        ? FrontendApi.postDialogueInfo(currentId, data)
-        : Promise.resolve(null),
-    {
-      onSuccess: () => refetchViewDialogIds(),
-    }
+  } = useMutation((data: { blocked?: boolean; viewed?: boolean }) =>
+    currentId
+      ? FrontendApi.postDialogueInfo(currentId, data)
+      : Promise.resolve(null)
   );
 
   const handleNextButtonClick = useCallback(() => {
