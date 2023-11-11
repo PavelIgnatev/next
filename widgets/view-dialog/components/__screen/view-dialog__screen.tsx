@@ -19,6 +19,7 @@ export interface ViewDialogScreenProps {
   onlyNew: boolean;
   dialogIdsLoading: boolean;
   dialogLoading: boolean;
+  viewAccountDataLoading: boolean;
   accountStatus: "Не определен" | "Ожидание..." | "Активен" | "Заблокирован";
 
   postDialogueInfo: (data: {

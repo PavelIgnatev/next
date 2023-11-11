@@ -78,7 +78,9 @@ class BackendService {
   async getDialoguesByGroupId(groupId: number): Promise<Dialogue[]> {
     await this.connect();
 
-    const result = await this.collection?.find({ groupId }).toArray();
+    const result = await this.collection
+      ?.find({ groupId }, { projection: { dateCreated: 1, messages: { $size: "$messages" }, _id: 0 } })
+      .toArray();
 
     return result || [];
   }

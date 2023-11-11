@@ -15,7 +15,7 @@ export interface ViewDialogProps {
 
   viewDialogIdsData?: Array<string> | null;
   viewDialogInfoData?: Dialogue | null;
-  statisticsByDay: { [key: string]: Dialogue[] };
+  statisticsByDay: { [key: string]: { dateCreated: Date; messages: number }[] };
 
   onlyDialog: boolean;
   onlyNew: boolean;
@@ -24,9 +24,10 @@ export interface ViewDialogProps {
   viewDialogIdsError: boolean;
   viewDialogInfoError: boolean;
   postDialogueInfoLoading: boolean;
+  viewAccountDataLoading: boolean;
   visibleStatistics: boolean;
   visibleStatisticsInfo: boolean;
-  accountStatus: "Не определен"  | "Ожидание..." | "Активен" | "Заблокирован";
+  accountStatus: "Не определен" | "Ожидание..." | "Активен" | "Заблокирован";
 
   postDialogueInfo: (data: {
     blocked?: boolean;
@@ -54,6 +55,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
     statisticsByDay,
     accountStatus,
     onChangeGroupId,
+    viewAccountDataLoading,
     viewDialogIdsLoading,
     viewDialogIdsData,
     viewDialogInfoData,
@@ -90,6 +92,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
           dialog={viewDialogInfoData}
           dialogIdsLoading={viewDialogIdsLoading}
           dialogLoading={viewDialogInfoLoading}
+          viewAccountDataLoading={viewAccountDataLoading}
           onOnlyNewClick={onOnlyNewClick}
           onOnlyDialogClick={onOnlyDialogClick}
           dialogIndex={currentDialogIndex}

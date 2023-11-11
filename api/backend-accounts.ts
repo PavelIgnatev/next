@@ -33,7 +33,10 @@ class BackendAccountService {
   async readAccount(username: string) {
     await this.connect();
 
-    return await this.collection.findOne({ username });
+    return await this.collection.findOne(
+      { username },
+      { projection: { banned: 1, _id: 0 } }
+    );
   }
 }
 

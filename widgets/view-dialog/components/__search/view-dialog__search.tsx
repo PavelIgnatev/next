@@ -57,6 +57,7 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
       />
       {dialog && dialogIds && dialogIds.length > 0 && (
         <button
+          type='button'
           disabled={!visibleStatistics}
           onClick={onStatistics}
           className={classes.viewDialogStatisticsButton}
@@ -80,6 +81,7 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
         disabled={loading}
         onClick={handleSearch}
         className={classes.viewDialogButton}
+        onDragEnter={handleSearch}
       >
         {loading ? (
           <MagnifyingGlass

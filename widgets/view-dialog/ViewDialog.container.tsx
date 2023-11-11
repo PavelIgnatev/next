@@ -7,11 +7,11 @@ import { ViewDialog } from "./ViewDialog";
 import FrontendApi from "../../api/frontend";
 import { Dialogue } from "../../@types/Dialogue";
 
-function avgMsgCount(arrays: string[][], includeLenOne = true) {
+function avgMsgCount(arrays: number[], includeLenOne = true) {
   const result = arrays.reduce(
     (acc, array) => {
-      if (array.length > 1 || includeLenOne) {
-        acc.totalMsgCount += array.length;
+      if (array > 1 || includeLenOne) {
+        acc.totalMsgCount += array;
         acc.totalArraysCount++;
       }
       return acc;
@@ -202,7 +202,9 @@ export const ViewDialogContainer = () => {
       return {};
     }
 
-    return viewDialogs.reduce<{ [key: string]: Dialogue[] }>((acc, cur) => {
+    return viewDialogs.reduce<{
+      [key: string]: { dateCreated: Date; messages: number }[];
+    }>((acc, cur) => {
       const { dateCreated } = cur;
       const date = new Date(dateCreated);
       const day = new Date(
@@ -227,7 +229,7 @@ export const ViewDialogContainer = () => {
     }
 
     return avgMsgCount(
-      viewDialogs.map((dialog) => dialog?.messages ?? []),
+      viewDialogs.map((dialog) => dialog?.messages ?? 0),
       true
     );
   }, [visibleStatistics, viewDialogs]);
@@ -238,7 +240,7 @@ export const ViewDialogContainer = () => {
     }
 
     return avgMsgCount(
-      viewDialogs.map((dialog) => dialog?.messages ?? []),
+      viewDialogs.map((dialog) => dialog?.messages ?? 0),
       false
     );
   }, [visibleStatistics, viewDialogs]);
@@ -249,9 +251,8 @@ export const ViewDialogContainer = () => {
     }
 
     return (
-      (viewDialogs.filter(
-        (dialog) => dialog.messages && dialog.messages.length > 1
-      ).length /
+      (viewDialogs.filter((dialog) => dialog.messages && dialog.messages > 1)
+        .length /
         viewDialogs.length) *
       100
     );
@@ -261,7 +262,7 @@ export const ViewDialogContainer = () => {
     if (viewAccountDataLoading) {
       return "Ожидание...";
     }
-    console.log(viewAccountData)
+
     if (viewAccountDataError || !viewAccountData) {
       return "Не определен";
     }
@@ -334,22 +335,17 @@ export const ViewDialogContainer = () => {
     refetchAccountData();
   }, [accountId, refetchAccountData]);
 
-  // useEffect(() => {
-  //   if (viewDialogInfoData) {
-  //     refetchAccountData();
-  //   }
-  // }, [viewDialogInfoData, refetchAccountData]);
-
   return (
     <ViewDialog
       currentDialogIndex={currentDialogIndex}
       onlyDialog={onlyDialog}
       onlyNew={onlyNew}
       postDialogueInfo={postDialogueInfo}
+      viewDialogInfoLoading={viewDialogInfoLoading}
       viewDialogIdsData={viewDialogIdsData}
       viewDialogInfoData={viewDialogInfoData}
       viewDialogIdsLoading={viewDialogIdsLoading}
-      viewDialogInfoLoading={viewDialogInfoLoading}
+      viewAccountDataLoading={viewAccountDataLoading}
       postDialogueInfoLoading={postDialogueInfoLoading}
       viewDialogIdsError={viewDialogIdsError}
       viewDialogInfoError={viewDialogInfoError}

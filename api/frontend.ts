@@ -22,9 +22,12 @@ class FrontendService {
   }
 
   getDialogues(groupId: string) {
-    return this.get<Array<Dialogue> | null>(urls.dialogues, {
-      groupId,
-    });
+    return this.get<Array<{ dateCreated: Date; messages: number }> | null>(
+      urls.dialogues,
+      {
+        groupId,
+      }
+    );
   }
 
   getAccountData(username: string) {

@@ -9,7 +9,7 @@ export interface ViewDialogStatisticsProps {
   averageDialogDuration: number;
   averageDialogDurationIfResponse: number;
   messagesToDialog: number;
-  statisticsByDay: { [key: string]: Dialogue[] };
+  statisticsByDay: { [key: string]: { dateCreated: Date; messages: number }[] };
 }
 
 export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
@@ -27,7 +27,7 @@ export const ViewDialogStatistics = (props: ViewDialogStatisticsProps) => {
     for (const [date, dialogues] of Object.entries(statisticsByDay)) {
       const messagesLength = dialogues.length;
       const dialoguesLength = dialogues.filter(
-        (dialogue) => dialogue.messages?.length && dialogue.messages.length > 1
+        (dialogue) => dialogue.messages && dialogue.messages > 1
       ).length;
 
       data.push({
