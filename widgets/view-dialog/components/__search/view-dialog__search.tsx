@@ -4,7 +4,7 @@ import { MagnifyingGlass, ColorRing } from "react-loader-spinner";
 import classes from "./view-dialog__search.module.css";
 import { ViewDialogSvg } from "../__svg/view-dialog__svg";
 import { ViewDialogStatisticsSvg } from "../__statistics-svg/view-dialog__svg";
-import { Dialogue } from "../../../../@types/dialogue";
+import { Dialogue } from "../../../../@types/Dialogue";
 
 export interface ViewDialogSearchProps {
   loading: boolean;

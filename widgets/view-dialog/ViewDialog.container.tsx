@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
+import { debounce } from "lodash";
 
 import { ViewDialog } from "./ViewDialog";
 import FrontendApi from "../../api/frontend";
-import { Dialogue } from "../../@types/dialogue";
+import { Dialogue } from "../../@types/Dialogue";
 
 function avgMsgCount(arrays: string[][], includeLenOne = true) {
   const result = arrays.reduce(
@@ -27,28 +28,38 @@ function avgMsgCount(arrays: string[][], includeLenOne = true) {
 
 export const ViewDialogContainer = () => {
   const [groupId, setGroupId] = useState<string | null>(null);
+  const [accountId, setAccountId] = useState<string>("");
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [onlyDialog, setOnlyDialog] = useState<boolean>(false);
   const [onlyNew, setOnlyNew] = useState<boolean>(false);
   const [currentDialogIndex, setCurrentDialogIndex] = useState<number>(0);
+  const [managerMessage, setManagerMessage] = useState("");
   const [visibleStatisticsInfo, setVisibleStatisticsInfo] =
     useState<boolean>(false);
 
   const {
     mutate: postDialogueInfoWithoutSuccess,
     isError: postDialogueInfoErrorWithoutSuccess,
-  } = useMutation((data: { blocked?: boolean; viewed?: boolean }) =>
-    currentId
-      ? FrontendApi.postDialogueInfo(currentId, data)
-      : Promise.resolve(null)
+  } = useMutation(
+    (data: {
+      blocked?: boolean;
+      viewed?: boolean;
+      stopped?: boolean;
+      managerMessage?: string;
+    }) =>
+      currentId
+        ? FrontendApi.postDialogueInfo(currentId, data)
+        : Promise.resolve(null)
   );
 
   const handleViewDialogIdsSuccess = useCallback((data: Array<string>) => {
     if (data && data.length > 0) {
       setCurrentId(data[0]);
       setCurrentDialogIndex(0);
+      setAccountId("");
     } else {
       setCurrentId(null);
+      setAccountId("");
     }
   }, []);
   const handleChangeGroupId = useCallback(
@@ -58,6 +69,7 @@ export const ViewDialogContainer = () => {
       setGroupId(groupId);
       setOnlyDialog(false);
       setOnlyNew(false);
+      setAccountId("");
     },
     [postDialogueInfoWithoutSuccess]
   );
@@ -87,7 +99,6 @@ export const ViewDialogContainer = () => {
       staleTime: Infinity,
     }
   );
-
   const {
     data: viewDialogs,
     isFetching: viewDialogsLoading,
@@ -116,6 +127,22 @@ export const ViewDialogContainer = () => {
     {
       enabled: !!currentId,
       staleTime: Infinity,
+      onSuccess: (e) => setAccountId(e?.accountId ?? ""),
+    }
+  );
+
+  const {
+    data: viewAccountData,
+    isFetching: viewAccountDataLoading,
+    isError: viewAccountDataError,
+    refetch: refetchAccountData,
+  } = useQuery(
+    "accountData",
+    () =>
+      accountId ? FrontendApi.getAccountData(accountId) : Promise.resolve(null),
+    {
+      enabled: !!viewDialogInfoData,
+      staleTime: Infinity,
     }
   );
 
@@ -123,10 +150,12 @@ export const ViewDialogContainer = () => {
     mutate: postDialogueInfo,
     isError: postDialogueInfoError,
     isLoading: postDialogueInfoLoading,
-  } = useMutation((data: { blocked?: boolean; viewed?: boolean }) =>
-    currentId
-      ? FrontendApi.postDialogueInfo(currentId, data)
-      : Promise.resolve(null)
+  } = useMutation(
+    (data: { blocked?: boolean; viewed?: boolean }) =>
+      currentId
+        ? FrontendApi.postDialogueInfo(currentId, data)
+        : Promise.resolve(null),
+    { onSuccess: () => refetchViewDialogInfo() }
   );
 
   const handleNextButtonClick = useCallback(() => {
@@ -142,6 +171,21 @@ export const ViewDialogContainer = () => {
       setCurrentDialogIndex((prev) => prev - 1);
     }
   }, [currentDialogIndex, postDialogueInfoWithoutSuccess]);
+
+  const handleManagerMessageChangeApi = useCallback(
+    debounce((value: string) => {
+      postDialogueInfoWithoutSuccess({ managerMessage: value });
+    }, 500),
+    []
+  );
+
+  const handleManagerMessageChange = useCallback(
+    (value: string) => {
+      setManagerMessage(value);
+      handleManagerMessageChangeApi(value);
+    },
+    [setManagerMessage, handleManagerMessageChangeApi]
+  );
 
   const visibleStatistics = useMemo(
     () =>
@@ -213,6 +257,22 @@ export const ViewDialogContainer = () => {
     );
   }, [visibleStatistics, viewDialogs]);
 
+  const accountStatus = useMemo(() => {
+    if (viewAccountDataLoading) {
+      return "Ожидание...";
+    }
+    console.log(viewAccountData)
+    if (viewAccountDataError || !viewAccountData) {
+      return "Не определен";
+    }
+
+    if (!viewAccountData.banned) {
+      return "Активен";
+    }
+
+    return "Заблокирован";
+  }, [viewAccountDataLoading, viewAccountData, viewAccountDataError]);
+
   useEffect(() => {
     if (groupId) {
       refetchViewDialogIds();
@@ -228,8 +288,9 @@ export const ViewDialogContainer = () => {
   useEffect(() => {
     if (currentId) {
       refetchViewDialogInfo();
+      setAccountId("");
     }
-  }, [currentId, refetchViewDialogInfo]);
+  }, [currentId, refetchViewDialogInfo, setAccountId]);
 
   useEffect(() => {
     if (viewDialogIdsData && viewDialogIdsData[currentDialogIndex]) {
@@ -252,10 +313,32 @@ export const ViewDialogContainer = () => {
   }, [viewDialogInfoError]);
 
   useEffect(() => {
+    if (viewAccountDataError) {
+      toast.error("Произошла ошибка. Попробуйте еще раз.");
+    }
+  }, [viewAccountDataError]);
+
+  useEffect(() => {
     if (postDialogueInfoError || postDialogueInfoErrorWithoutSuccess) {
       toast.error("Произошла ошибка. Попробуйте еще раз.");
     }
   }, [postDialogueInfoError, postDialogueInfoErrorWithoutSuccess]);
+
+  useEffect(() => {
+    if (viewDialogInfoData && viewDialogInfoData.managerMessage) {
+      setManagerMessage(viewDialogInfoData.managerMessage);
+    }
+  }, [viewDialogInfoData]);
+
+  useEffect(() => {
+    refetchAccountData();
+  }, [accountId, refetchAccountData]);
+
+  // useEffect(() => {
+  //   if (viewDialogInfoData) {
+  //     refetchAccountData();
+  //   }
+  // }, [viewDialogInfoData, refetchAccountData]);
 
   return (
     <ViewDialog
@@ -281,9 +364,12 @@ export const ViewDialogContainer = () => {
       onStatistics={() => {
         setVisibleStatisticsInfo((prev) => !prev);
       }}
+      accountStatus={accountStatus}
       averageDialogDuration={averageDialogDuration}
       averageDialogDurationIfResponse={averageDialogDurationIfResponse}
       messagesToDialog={messagesToDialog}
+      onManagerMessageChange={handleManagerMessageChange}
+      managerMessageValue={managerMessage}
     />
   );
 };

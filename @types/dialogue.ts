@@ -9,6 +9,9 @@ export interface Dialogue {
   phone?: string;
   title?: string;
   viewed?: boolean;
+  stopped?: boolean;
+  managerMessage?: string;
+  accountId?: string;
 
   dateCreated: Date;
   dateUpdated: Date;

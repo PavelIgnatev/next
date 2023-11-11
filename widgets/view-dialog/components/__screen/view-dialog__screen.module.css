@@ -35,6 +35,11 @@
   margin-top: 14px;
 }
 
+.viewDialogAccountStatus {
+  position: absolute;
+  right: 12px;
+  font-weight: 500;
+}
 .viewDialogScreenMainCount {
   margin-bottom: 8px;
 }

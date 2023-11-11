@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import backendApi from "../../../api/backend";
+import backendAccountApi from "../../../api/backend-accounts";
 import { Dialogue } from "../../../@types/Dialogue";
 
 export default async function handler(
@@ -8,9 +8,9 @@ export default async function handler(
   res: NextApiResponse<Array<Dialogue> | { message: string }>
 ) {
   try {
-    const { groupId } = req.query;
+    const { username } = req.query;
 
-    const data = await backendApi.getDialoguesByGroupId(Number(groupId));
+    const data = await backendAccountApi.readAccount(String(username));
 
     res.status(200).json(data);
   } catch ({ message }: any) {

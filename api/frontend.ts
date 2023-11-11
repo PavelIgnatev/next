@@ -1,7 +1,8 @@
 import axios from "axios";
 
-import { Dialogue } from "../@types/dialogue";
+import { Dialogue } from "../@types/Dialogue";
 import { urls } from "./urls";
+import { Account } from "../@types/Account";
 
 class FrontendService {
   async get<T>(url: string, params?: any) {
@@ -23,6 +24,12 @@ class FrontendService {
   getDialogues(groupId: string) {
     return this.get<Array<Dialogue> | null>(urls.dialogues, {
       groupId,
+    });
+  }
+
+  getAccountData(username: string) {
+    return this.get<Account | null>(urls.accountData, {
+      username,
     });
   }
 

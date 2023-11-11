@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { MagnifyingGlass } from "react-loader-spinner";
 
-import { Dialogue } from "../../../../@types/dialogue";
+import { Dialogue } from "../../../../@types/Dialogue";
 
 import { ViewDialogMessages } from "../__messages/view-dialog__messages";
 import { ViewDialogButtons } from "../__buttons/view-dialog__buttons";
@@ -10,6 +10,7 @@ import classes from "./view-dialog__screen.module.css";
 
 export interface ViewDialogScreenProps {
   dialogIndex: number;
+  managerMessageValue: string;
 
   dialogIds?: Array<string> | null;
   dialog?: Dialogue | null;
@@ -18,20 +19,28 @@ export interface ViewDialogScreenProps {
   onlyNew: boolean;
   dialogIdsLoading: boolean;
   dialogLoading: boolean;
+  accountStatus: "Не определен" | "Ожидание..." | "Активен" | "Заблокирован";
 
-  postDialogueInfo: (data: { blocked?: boolean; viewed?: boolean }) => void;
+  postDialogueInfo: (data: {
+    blocked?: boolean;
+    viewed?: boolean;
+    stopped?: boolean;
+  }) => void;
   onOnlyNewClick: () => void;
   onOnlyDialogClick: () => void;
   onNextButtonClick: () => void;
   onPrevButtonClick: () => void;
+  onManagerMessageChange: (value: string) => void;
 }
 
 export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
   const {
     postDialogueInfo,
     dialogIndex,
+    managerMessageValue,
     onlyDialog,
     onlyNew,
+    accountStatus,
     dialog,
     dialogIds,
     dialogIdsLoading,
@@ -40,6 +49,7 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
     onOnlyDialogClick,
     onNextButtonClick,
     onPrevButtonClick,
+    onManagerMessageChange,
   } = props;
 
   const renderDefaultContent = useMemo(() => {
@@ -128,16 +138,32 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
           <strong>Описание: </strong>
           {dialog?.bio ? dialog.bio : "Отсутствует"}
         </div>
+        <div className={classes.viewDialogAccountStatus}>
+          Статус бота: &nbsp;
+          <span
+            style={{
+              color:
+                accountStatus === "Активен" || accountStatus === "Ожидание..."
+                  ? "green"
+                  : "red",
+            }}
+          >
+            {accountStatus}
+          </span>
+        </div>
         <ViewDialogMessages messages={dialog?.messages} />
         <ViewDialogButtons
           dialog={dialog}
           postDialogueInfo={postDialogueInfo}
           onlyDialog={onlyDialog}
           onlyNew={onlyNew}
+          managerMessageValue={managerMessageValue}
+          onManagerMessageChange={onManagerMessageChange}
           onOnlyNewClick={onOnlyNewClick}
           onOnlyDialogClick={onOnlyDialogClick}
           onNextButtonClick={onNextButtonClick}
           onPrevButtonClick={onPrevButtonClick}
+          accountStatus={accountStatus}
         />
       </div>
     );
@@ -153,6 +179,8 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
     onOnlyDialogClick,
     onNextButtonClick,
     onPrevButtonClick,
+    accountStatus,
+    managerMessageValue,
   ]);
 
   const renderContent = useMemo(() => {

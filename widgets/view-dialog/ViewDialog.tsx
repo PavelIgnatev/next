@@ -3,14 +3,15 @@ import { ViewDialogSearch } from "./components/__search/view-dialog__search";
 import { ViewDialogStatistics } from "./components/__statistics/view-dialog__statistics";
 import { Header } from "../header/header";
 
-import { Dialogue } from "../../@types/dialogue";
+import { Dialogue } from "../../@types/Dialogue";
 import classes from "./view-dialog.module.css";
 
 export interface ViewDialogProps {
   currentDialogIndex: number;
   averageDialogDuration: number;
   averageDialogDurationIfResponse: number;
-  messagesToDialog: number
+  messagesToDialog: number;
+  managerMessageValue: string;
 
   viewDialogIdsData?: Array<string> | null;
   viewDialogInfoData?: Dialogue | null;
@@ -25,14 +26,20 @@ export interface ViewDialogProps {
   postDialogueInfoLoading: boolean;
   visibleStatistics: boolean;
   visibleStatisticsInfo: boolean;
+  accountStatus: "Не определен"  | "Ожидание..." | "Активен" | "Заблокирован";
 
-  postDialogueInfo: (data: { blocked?: boolean }) => void;
+  postDialogueInfo: (data: {
+    blocked?: boolean;
+    viewed?: boolean;
+    stopped?: boolean;
+  }) => void;
   onChangeGroupId: (groupId: string) => void;
   onOnlyNewClick: () => void;
   onOnlyDialogClick: () => void;
   onNextButtonClick: () => void;
   onPrevButtonClick: () => void;
   onStatistics: () => void;
+  onManagerMessageChange: (value: string) => void;
 }
 
 export const ViewDialog = (props: ViewDialogProps) => {
@@ -42,8 +49,10 @@ export const ViewDialog = (props: ViewDialogProps) => {
     averageDialogDurationIfResponse,
     messagesToDialog,
     onlyDialog,
+    managerMessageValue,
     onlyNew,
     statisticsByDay,
+    accountStatus,
     onChangeGroupId,
     viewDialogIdsLoading,
     viewDialogIdsData,
@@ -56,6 +65,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
     onPrevButtonClick,
     postDialogueInfo,
     visibleStatistics,
+    onManagerMessageChange,
     onStatistics,
   } = props;
 
@@ -72,7 +82,9 @@ export const ViewDialog = (props: ViewDialogProps) => {
       />
       {!visibleStatisticsInfo ? (
         <ViewDialogScreen
+          accountStatus={accountStatus}
           onlyNew={onlyNew}
+          managerMessageValue={managerMessageValue}
           onlyDialog={onlyDialog}
           dialogIds={viewDialogIdsData}
           dialog={viewDialogInfoData}
@@ -84,6 +96,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
           onNextButtonClick={onNextButtonClick}
           onPrevButtonClick={onPrevButtonClick}
           postDialogueInfo={postDialogueInfo}
+          onManagerMessageChange={onManagerMessageChange}
         />
       ) : (
         <ViewDialogStatistics

@@ -3,5 +3,7 @@ export const urls = {
   dialogueIds: "/api/dialogue/ids",
   dialogues: "/api/dialogue/dialogues",
 
+  accountData: '/api/account/data',
+
   chatGptGenerate: "api/chatgpt/generate",
 };

@@ -2,7 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Line } from "recharts";
 import { useMemo } from "react";
 import useResizeObserver from "use-resize-observer";
 
-import { Dialogue } from "../../../../@types/dialogue";
+import { Dialogue } from "../../../../@types/Dialogue";
 import classes from "./view-dialog__statistics.module.css";
 
 export interface ViewDialogStatisticsProps {
