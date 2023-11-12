@@ -1,0 +1,70 @@
+.viewDialogTopButtons {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 900px;
+  margin: 0 auto;
+  border: 2px solid black;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.viewDialogTopButtonsWrapper {
+  display: flex;
+}
+
+.viewDialogButton {
+  flex: 1;
+  background-color: #ffffff;
+  color: black;
+
+  border: none;
+  border-right: 2px solid black;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.viewDialogButton:last-child {
+  border-right: 0;
+}
+
+
+.viewDialogButton:hover {
+  background-color: #99999952;
+  font-weight: 500;
+  color: black;
+}
+
+.viewDialogButton:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.viewDialogButton:last-child {
+  margin-right: 0;
+}
+
+
+.labelField {
+  margin-bottom: 6px;
+  display: block;
+  font-weight: 500;
+}
+
+.viewDialogSendSvg {
+  width: 30px;
+  height: 30px;
+  transform: rotate(25deg);
+  margin-right: 5px;
+}
+
+.managment,
+.dialog,
+.all,
+.lead  {
+  background: black !important;
+  color: white !important;
+}

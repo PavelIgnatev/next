@@ -52,34 +52,58 @@ class BackendService {
 
   async getIdsByGroupId(
     groupId: number,
-    onlyNew = false,
-    onlyDialog = false
+    activeTabe: "Все" | "Диалоги" | "Лиды" | "Ручное управление"
   ): Promise<string[]> {
     await this.connect();
 
     let query: {
       groupId: number;
       viewed?: boolean;
+      lead?: boolean;
       ["messages.1"]?: { $exists: true };
+      stopped?: boolean;
+      blocked?: { $ne: true };
     } = { groupId };
 
-    if (onlyNew) {
-      query.viewed = false;
-    }
-
-    if (onlyDialog) {
+    if (activeTabe === "Диалоги") {
       query["messages.1"] = { $exists: true };
     }
 
-    const ids = await this.collection?.distinct("_id", query);
-    return ids || [];
+    if (activeTabe === "Лиды") {
+      query["lead"] = true;
+    }
+
+    if (activeTabe === "Ручное управление") {
+      query["stopped"] = true;
+      query["blocked"] = { $ne: true };
+    }
+
+    const priorityQuery = { ...query, viewed: false };
+    const nonPriorityQuery = { ...query, viewed: { $ne: false } };
+
+    const priorityIds = await this.collection?.distinct("_id", priorityQuery);
+    const nonPriorityIds = await this.collection?.distinct(
+      "_id",
+      nonPriorityQuery
+    );
+
+    return (priorityIds || []).concat(nonPriorityIds || []);
   }
 
   async getDialoguesByGroupId(groupId: number): Promise<Dialogue[]> {
     await this.connect();
 
     const result = await this.collection
-      ?.find({ groupId }, { projection: { dateCreated: 1, messages: { $size: "$messages" }, _id: 0 } })
+      ?.find(
+        { groupId },
+        {
+          projection: {
+            dateCreated: 1,
+            messages: { $size: "$messages" },
+            _id: 0,
+          },
+        }
+      )
       .toArray();
 
     return result || [];

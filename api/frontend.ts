@@ -13,11 +13,13 @@ class FrontendService {
     return this.get<Dialogue | null>(urls.dialogueInfo, { id });
   }
 
-  getDialogueIds(groupId: string, onlyDialog: boolean, onlyNew: boolean) {
+  getDialogueIds(
+    groupId: string,
+    activeTab: "Все" | "Диалоги" | "Лиды" | "Ручное управление"
+  ) {
     return this.get<Array<string> | null>(urls.dialogueIds, {
       groupId,
-      onlyDialog,
-      onlyNew,
+      activeTab,
     });
   }
 

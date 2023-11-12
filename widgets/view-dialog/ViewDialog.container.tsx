@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
-import { debounce } from "lodash";
 
 import { ViewDialog } from "./ViewDialog";
 import FrontendApi from "../../api/frontend";
-import { Dialogue } from "../../@types/Dialogue";
 
 function avgMsgCount(arrays: number[], includeLenOne = true) {
   const result = arrays.reduce(
@@ -30,12 +28,13 @@ export const ViewDialogContainer = () => {
   const [groupId, setGroupId] = useState<string | null>(null);
   const [accountId, setAccountId] = useState<string>("");
   const [currentId, setCurrentId] = useState<string | null>(null);
-  const [onlyDialog, setOnlyDialog] = useState<boolean>(false);
-  const [onlyNew, setOnlyNew] = useState<boolean>(false);
   const [currentDialogIndex, setCurrentDialogIndex] = useState<number>(0);
   const [managerMessage, setManagerMessage] = useState("");
   const [visibleStatisticsInfo, setVisibleStatisticsInfo] =
     useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<
+    "Все" | "Диалоги" | "Лиды" | "Ручное управление"
+  >("Все");
 
   const {
     mutate: postDialogueInfoWithoutSuccess,
@@ -56,10 +55,10 @@ export const ViewDialogContainer = () => {
     if (data && data.length > 0) {
       setCurrentId(data[0]);
       setCurrentDialogIndex(0);
-      setAccountId("");
+      setManagerMessage("");
     } else {
       setCurrentId(null);
-      setAccountId("");
+      setManagerMessage("");
     }
   }, []);
   const handleChangeGroupId = useCallback(
@@ -67,20 +66,11 @@ export const ViewDialogContainer = () => {
       setVisibleStatisticsInfo(false);
       postDialogueInfoWithoutSuccess({ viewed: true });
       setGroupId(groupId);
-      setOnlyDialog(false);
-      setOnlyNew(false);
-      setAccountId("");
+      setManagerMessage("");
+      setActiveTab("Все");
     },
     [postDialogueInfoWithoutSuccess]
   );
-  const handleOnlyNewClick = useCallback(() => {
-    postDialogueInfoWithoutSuccess({ viewed: true });
-    setOnlyNew((prev) => !prev);
-  }, [postDialogueInfoWithoutSuccess]);
-  const handleOnlyDialogClick = useCallback(() => {
-    postDialogueInfoWithoutSuccess({ viewed: true });
-    setOnlyDialog((prev) => !prev);
-  }, [postDialogueInfoWithoutSuccess]);
 
   const {
     data: viewDialogIdsData,
@@ -91,7 +81,7 @@ export const ViewDialogContainer = () => {
     "dialogueIds",
     () =>
       groupId
-        ? FrontendApi.getDialogueIds(groupId, onlyDialog, onlyNew)
+        ? FrontendApi.getDialogueIds(groupId, activeTab)
         : Promise.resolve([]),
     {
       enabled: !!groupId,
@@ -99,6 +89,7 @@ export const ViewDialogContainer = () => {
       staleTime: Infinity,
     }
   );
+
   const {
     data: viewDialogs,
     isFetching: viewDialogsLoading,
@@ -151,7 +142,7 @@ export const ViewDialogContainer = () => {
     isError: postDialogueInfoError,
     isLoading: postDialogueInfoLoading,
   } = useMutation(
-    (data: { blocked?: boolean; viewed?: boolean }) =>
+    (data: { blocked?: boolean; viewed?: boolean; managerMessage?: string }) =>
       currentId
         ? FrontendApi.postDialogueInfo(currentId, data)
         : Promise.resolve(null),
@@ -172,20 +163,19 @@ export const ViewDialogContainer = () => {
     }
   }, [currentDialogIndex, postDialogueInfoWithoutSuccess]);
 
-  const handleManagerMessageChangeApi = useCallback(
-    debounce((value: string) => {
-      postDialogueInfoWithoutSuccess({ managerMessage: value });
-    }, 500),
-    []
-  );
-
   const handleManagerMessageChange = useCallback(
     (value: string) => {
       setManagerMessage(value);
-      handleManagerMessageChangeApi(value);
     },
-    [setManagerMessage, handleManagerMessageChangeApi]
+    [setManagerMessage]
   );
+
+  const handleManagerMessageSend = useCallback(() => {
+    if (viewDialogInfoData?.managerMessage !== managerMessage) {
+      postDialogueInfo({ managerMessage });
+      setManagerMessage("");
+    }
+  }, [postDialogueInfo, managerMessage, viewDialogInfoData]);
 
   const visibleStatistics = useMemo(
     () =>
@@ -258,13 +248,21 @@ export const ViewDialogContainer = () => {
     );
   }, [visibleStatistics, viewDialogs]);
 
+  const visibleSendMessage = useMemo(() => {
+    if (managerMessage) {
+      return true;
+    }
+
+    return true;
+  }, [managerMessage]);
+
   const accountStatus = useMemo(() => {
     if (viewAccountDataLoading) {
       return "Ожидание...";
     }
 
     if (viewAccountDataError || !viewAccountData) {
-      return "Не определен";
+      return "Заблокирован";
     }
 
     if (!viewAccountData.banned) {
@@ -278,7 +276,13 @@ export const ViewDialogContainer = () => {
     if (groupId) {
       refetchViewDialogIds();
     }
-  }, [groupId, onlyDialog, onlyNew, refetchViewDialogIds]);
+  }, [groupId, refetchViewDialogIds]);
+
+  useEffect(() => {
+    if (groupId && activeTab) {
+      refetchViewDialogIds();
+    }
+  }, [groupId, activeTab]);
 
   useEffect(() => {
     if (groupId) {
@@ -326,20 +330,15 @@ export const ViewDialogContainer = () => {
   }, [postDialogueInfoError, postDialogueInfoErrorWithoutSuccess]);
 
   useEffect(() => {
-    if (viewDialogInfoData && viewDialogInfoData.managerMessage) {
-      setManagerMessage(viewDialogInfoData.managerMessage);
-    }
-  }, [viewDialogInfoData]);
-
-  useEffect(() => {
     refetchAccountData();
   }, [accountId, refetchAccountData]);
 
+  /// кругляшки
   return (
     <ViewDialog
+      activeTab={activeTab}
+      onChangeActiveTab={(value: typeof activeTab) => setActiveTab(value)}
       currentDialogIndex={currentDialogIndex}
-      onlyDialog={onlyDialog}
-      onlyNew={onlyNew}
       postDialogueInfo={postDialogueInfo}
       viewDialogInfoLoading={viewDialogInfoLoading}
       viewDialogIdsData={viewDialogIdsData}
@@ -350,12 +349,11 @@ export const ViewDialogContainer = () => {
       viewDialogIdsError={viewDialogIdsError}
       viewDialogInfoError={viewDialogInfoError}
       onChangeGroupId={handleChangeGroupId}
-      onOnlyNewClick={handleOnlyNewClick}
-      onOnlyDialogClick={handleOnlyDialogClick}
       onNextButtonClick={handleNextButtonClick}
       onPrevButtonClick={handlePrevButtonClick}
       visibleStatistics={visibleStatistics}
       statisticsByDay={statisticsByDay}
+      visibleSendMessage={visibleSendMessage}
       visibleStatisticsInfo={visibleStatisticsInfo}
       onStatistics={() => {
         setVisibleStatisticsInfo((prev) => !prev);
@@ -366,6 +364,8 @@ export const ViewDialogContainer = () => {
       messagesToDialog={messagesToDialog}
       onManagerMessageChange={handleManagerMessageChange}
       managerMessageValue={managerMessage}
+      onManagerMessageSend={handleManagerMessageSend}
+      messagesDialogCount={viewDialogInfoData?.messages?.length || 0}
     />
   );
 };

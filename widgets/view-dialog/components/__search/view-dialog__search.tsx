@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MagnifyingGlass, ColorRing } from "react-loader-spinner";
+import { MagnifyingGlass, ColorRing, TailSpin } from "react-loader-spinner";
 
 import classes from "./view-dialog__search.module.css";
 import { ViewDialogSvg } from "../__svg/view-dialog__svg";
@@ -57,8 +57,8 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
       />
       {dialog && dialogIds && dialogIds.length > 0 && (
         <button
-          type='button'
-          disabled={!visibleStatistics}
+          type="button"
+          disabled={!visibleStatistics || loading}
           onClick={onStatistics}
           className={classes.viewDialogStatisticsButton}
         >
@@ -67,11 +67,7 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
               className={classes.viewDialogSearchStatisticsSvg}
             />
           ) : (
-            <ColorRing
-              height={66}
-              width={66}
-              colors={["orange", "orange", "orange", "orange", "orange"]}
-            />
+            <TailSpin height={30} width={30} radius={0.5} color="black" />
           )}
         </button>
       )}
@@ -84,12 +80,7 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
         onDragEnter={handleSearch}
       >
         {loading ? (
-          <MagnifyingGlass
-            height={66}
-            width={66}
-            color="black"
-            glassColor="white"
-          />
+          <TailSpin height={30} width={30} radius={0.5} color="black" />
         ) : (
           <ViewDialogSvg className={classes.viewDialogSearchSvg} />
         )}

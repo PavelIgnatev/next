@@ -1,24 +1,22 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 
 import classes from "./view-dialog__messages.module.css";
 
 interface ViewDialogMessagesProps {
   messages?: Array<string>;
+  managerMessage?: string;
 }
 
 export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
   messages,
+  managerMessage,
 }) => {
-  const [mainName, setMainName] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const mainName = messages?.[0]?.split(":")?.[0];
 
   const getNameByMessage = useCallback(
     (message: string) => {
       const [name] = message.split(":");
-
-      if (!mainName) {
-        setMainName(name);
-      }
 
       return name;
     },
@@ -27,16 +25,29 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
 
   useEffect(() => {
     if (dialogRef.current) {
-      dialogRef.current.scrollTop = dialogRef.current.scrollHeight;
+      setTimeout(() => {
+        if (dialogRef.current) {
+          dialogRef.current.scrollTop = dialogRef.current.scrollHeight;
+        }
+      }, 100);
     }
-  }, [messages]);
+  }, [messages, managerMessage]);
 
+  const renderMessages = useMemo(() => {
+    if (messages) {
+      if (managerMessage) {
+        // это чтобы рендерить потенциальное сообщение для отправки
+        return [...messages, `${mainName}: ${managerMessage}`];
+      }
 
+      return messages;
+    }
+  }, [messages, managerMessage, mainName]);
 
   return (
-    <div className={classes.dialogContainer} >
+    <div className={classes.dialogContainer}>
       <div className={classes.dialog} ref={dialogRef}>
-        {messages?.map((message, index) => {
+        {renderMessages?.map((message, index) => {
           const name = getNameByMessage(message);
           const isRightAligned = name === mainName;
           const messageStyle = isRightAligned
@@ -44,8 +55,15 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
             : classes.messageLeft;
 
           return (
-            <div key={index} className={`${classes.message} ${messageStyle}`}>
-              {message.replace(`${name}: `, "")}
+            <div
+              key={index}
+              className={`${classes.message} ${messageStyle} ${
+                message === `${mainName}: ${managerMessage}`
+                  ? classes.aiMessage
+                  : ""
+              }`}
+            >
+              {message.replace(`${name}: `, "").trim()}
             </div>
           );
         })}

@@ -1,6 +1,8 @@
 html {
-  line-height: 1.15; /* 1 */
-  -webkit-text-size-adjust: 100%; /* 2 */
+  line-height: 1.15;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
 }
 
 body {
@@ -17,14 +19,19 @@ h1 {
 }
 
 hr {
-  box-sizing: content-box; /* 1 */
-  height: 0; /* 1 */
-  overflow: visible; /* 2 */
+  box-sizing: content-box;
+  /* 1 */
+  height: 0;
+  /* 1 */
+  overflow: visible;
+  /* 2 */
 }
 
 pre {
-  font-family: monospace, monospace; /* 1 */
-  font-size: 1em; /* 2 */
+  font-family: monospace, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
 }
 
 a {
@@ -37,9 +44,12 @@ a {
    */
 
 abbr[title] {
-  border-bottom: none; /* 1 */
-  text-decoration: underline; /* 2 */
-  text-decoration: underline dotted; /* 2 */
+  border-bottom: none;
+  /* 1 */
+  text-decoration: underline;
+  /* 2 */
+  text-decoration: underline dotted;
+  /* 2 */
 }
 
 /**
@@ -59,8 +69,10 @@ strong {
 code,
 kbd,
 samp {
-  font-family: monospace, monospace; /* 1 */
-  font-size: 1em; /* 2 */
+  font-family: monospace, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
 }
 
 small {
@@ -99,10 +111,14 @@ input,
 optgroup,
 select,
 textarea {
-  font-family: inherit; /* 1 */
-  font-size: 100%; /* 1 */
-  line-height: 1.15; /* 1 */
-  margin: 0; /* 2 */
+  font-family: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  line-height: 1.15;
+  /* 1 */
+  margin: 0;
+  /* 2 */
 }
 
 button,
@@ -117,12 +133,6 @@ select {
   text-transform: none;
 }
 
-button,
-[type="button"],
-[type="reset"],
-[type="submit"] {
-  -webkit-appearance: button;
-}
 
 button::-moz-focus-inner,
 [type="button"]::-moz-focus-inner,
@@ -144,12 +154,18 @@ fieldset {
 }
 
 legend {
-  box-sizing: border-box; /* 1 */
-  color: inherit; /* 2 */
-  display: table; /* 1 */
-  max-width: 100%; /* 1 */
-  padding: 0; /* 3 */
-  white-space: normal; /* 1 */
+  box-sizing: border-box;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  display: table;
+  /* 1 */
+  max-width: 100%;
+  /* 1 */
+  padding: 0;
+  /* 3 */
+  white-space: normal;
+  /* 1 */
 }
 
 progress {
@@ -162,8 +178,10 @@ textarea {
 
 [type="checkbox"],
 [type="radio"] {
-  box-sizing: border-box; /* 1 */
-  padding: 0; /* 2 */
+  box-sizing: border-box;
+  /* 1 */
+  padding: 0;
+  /* 2 */
 }
 
 [type="number"]::-webkit-inner-spin-button,
@@ -172,8 +190,8 @@ textarea {
 }
 
 [type="search"] {
-  -webkit-appearance: textfield; /* 1 */
-  outline-offset: -2px; /* 2 */
+  outline-offset: -2px;
+  /* 2 */
 }
 
 [type="search"]::-webkit-search-decoration {
@@ -181,8 +199,10 @@ textarea {
 }
 
 ::-webkit-file-upload-button {
-  -webkit-appearance: button; /* 1 */
-  font: inherit; /* 2 */
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
 }
 
 details {
@@ -202,7 +222,8 @@ template {
 }
 
 :where(html) {
-  line-height: 1.15; /* 1 */
+  line-height: 1.15;
+  /* 1 */
 }
 
 :where(h1) {
@@ -217,14 +238,19 @@ template {
 }
 
 :where(hr) {
-  box-sizing: content-box; /* 1 */
-  color: inherit; /* 2 */
-  height: 0; /* 1 */
+  box-sizing: content-box;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  height: 0;
+  /* 1 */
 }
 
 :where(pre) {
-  font-family: monospace, monospace; /* 1 */
-  font-size: 1em; /* 2 */
+  font-family: monospace, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
 }
 
 :where(abbr[title]) {
@@ -237,8 +263,10 @@ template {
 }
 
 :where(code, kbd, samp) {
-  font-family: monospace, monospace; /* 1 */
-  font-size: 1em; /* 2 */
+  font-family: monospace, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
 }
 
 :where(small) {
@@ -246,8 +274,10 @@ template {
 }
 
 :where(table) {
-  border-color: currentColor; /* 1 */
-  text-indent: 0; /* 2 */
+  border-color: currentColor;
+  /* 1 */
+  text-indent: 0;
+  /* 2 */
 }
 
 :where(button, input, select) {
@@ -256,13 +286,6 @@ template {
 
 :where(button) {
   text-transform: none;
-}
-
-:where(
-    button,
-    input:is([type="button" i], [type="reset" i], [type="submit" i])
-  ) {
-  -webkit-appearance: button;
 }
 
 :where(progress) {
@@ -278,8 +301,8 @@ template {
 }
 
 :where(input[type="search" i]) {
-  -webkit-appearance: textfield; /* 1 */
-  outline-offset: -2px; /* 2 */
+  outline-offset: -2px;
+  /* 2 */
 }
 
 ::-webkit-inner-spin-button,
@@ -297,32 +320,26 @@ template {
 }
 
 ::-webkit-file-upload-button {
-  -webkit-appearance: button; /* 1 */
-  font: inherit; /* 2 */
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
 }
 
-:where(
-    button,
-    input:is(
-        [type="button" i],
-        [type="color" i],
-        [type="reset" i],
-        [type="submit" i]
-      )
-  )::-moz-focus-inner {
+:where(button,
+  input:is([type="button" i],
+    [type="color" i],
+    [type="reset" i],
+    [type="submit" i]))::-moz-focus-inner {
   border-style: none;
   padding: 0;
 }
 
-:where(
-    button,
-    input:is(
-        [type="button" i],
-        [type="color" i],
-        [type="reset" i],
-        [type="submit" i]
-      )
-  )::-moz-focusring {
+:where(button,
+  input:is([type="button" i],
+    [type="color" i],
+    [type="reset" i],
+    [type="submit" i]))::-moz-focusring {
   outline: 1px dotted ButtonText;
 }
 
@@ -354,6 +371,13 @@ template {
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
   font-family: "Open Sans", sans-serif;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
 }

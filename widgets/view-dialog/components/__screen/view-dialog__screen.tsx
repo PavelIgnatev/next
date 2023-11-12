@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { MagnifyingGlass } from "react-loader-spinner";
+import { MagnifyingGlass, TailSpin } from "react-loader-spinner";
 
 import { Dialogue } from "../../../../@types/Dialogue";
 
@@ -10,16 +10,18 @@ import classes from "./view-dialog__screen.module.css";
 
 export interface ViewDialogScreenProps {
   dialogIndex: number;
-  managerMessageValue: string;
+  managerMessageValue?: string;
+  messagesDialogCount: number;
 
   dialogIds?: Array<string> | null;
   dialog?: Dialogue | null;
 
-  onlyDialog: boolean;
-  onlyNew: boolean;
+  visibleSendMessage: boolean;
+
   dialogIdsLoading: boolean;
   dialogLoading: boolean;
   viewAccountDataLoading: boolean;
+  postDialogueInfoLoading: boolean;
   accountStatus: "Не определен" | "Ожидание..." | "Активен" | "Заблокирован";
 
   postDialogueInfo: (data: {
@@ -27,11 +29,10 @@ export interface ViewDialogScreenProps {
     viewed?: boolean;
     stopped?: boolean;
   }) => void;
-  onOnlyNewClick: () => void;
-  onOnlyDialogClick: () => void;
   onNextButtonClick: () => void;
   onPrevButtonClick: () => void;
   onManagerMessageChange: (value: string) => void;
+  onManagerMessageSend: () => void;
 }
 
 export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
@@ -39,18 +40,19 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
     postDialogueInfo,
     dialogIndex,
     managerMessageValue,
-    onlyDialog,
-    onlyNew,
+    messagesDialogCount,
+    visibleSendMessage,
     accountStatus,
     dialog,
     dialogIds,
     dialogIdsLoading,
+    postDialogueInfoLoading,
+    viewAccountDataLoading,
     dialogLoading,
-    onOnlyNewClick,
-    onOnlyDialogClick,
     onNextButtonClick,
     onPrevButtonClick,
     onManagerMessageChange,
+    onManagerMessageSend,
   } = props;
 
   const renderDefaultContent = useMemo(() => {
@@ -86,29 +88,18 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
   const renderLoadingContent = useMemo(() => {
     return (
       <div className={classes.viewDialogScreenLoading}>
-        <MagnifyingGlass
-          height={66}
-          width={66}
-          color="black"
-          glassColor="white"
-        />
+        <TailSpin height={66} width={66} color="black" />
       </div>
     );
   }, []);
 
   const mainTitleMessage = useMemo(() => {
-    if (onlyDialog) {
-      if (onlyNew) {
-        return "Новый диалог";
-      }
+    if (messagesDialogCount > 1) {
       return "Диалог";
     }
 
-    if (onlyNew) {
-      return "Новое сообщение";
-    }
     return "Сообщение";
-  }, [onlyDialog, onlyNew]);
+  }, [messagesDialogCount]);
 
   const renderMainContent = useMemo(() => {
     return (
@@ -116,6 +107,14 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
         <div className={classes.viewDialogScreenMainCount}>
           <strong>{mainTitleMessage}</strong> {dialogIndex + 1}/
           {dialogIds?.length || 0}
+        </div>
+        <div className={classes.viewDialogScreenMainCount}>
+          <strong>Статус: </strong>
+          {dialog?.viewed ? (
+            <span style={{ color: "green" }}>Прочитано</span>
+          ) : (
+            <span style={{ color: "red" }}>Не прочитано</span>
+          )}
         </div>
         <div className={classes.viewDialogScreenMainHref}>
           <strong>Ссылка на аккаунт: </strong>
@@ -131,6 +130,18 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
             "Отсутствует"
           )}
         </div>
+        {dialog?.varUsername && dialog?.varUsername !== dialog?.username && (
+          <div className={classes.viewDialogScreenMainHref}>
+            <strong>Ссылка на аккаунт (альтернативная): </strong>
+            <a
+              href={`https://t.me/${dialog.varUsername}`}
+              target="_blank"
+              className={classes.viewDialogScreenMainA}
+            >
+              {dialog?.title}
+            </a>
+          </div>
+        )}
         <div className={classes.viewDialogScreenMainPhone}>
           <strong>Телефон: </strong>
           {dialog?.phone ? dialog.phone : "Отсутствует"}
@@ -152,16 +163,17 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
             {accountStatus}
           </span>
         </div>
-        <ViewDialogMessages messages={dialog?.messages} />
+        <ViewDialogMessages
+          messages={dialog?.messages}
+          managerMessage={dialog?.managerMessage}
+        />
         <ViewDialogButtons
+          visibleSendMessage={visibleSendMessage}
           dialog={dialog}
           postDialogueInfo={postDialogueInfo}
-          onlyDialog={onlyDialog}
-          onlyNew={onlyNew}
           managerMessageValue={managerMessageValue}
           onManagerMessageChange={onManagerMessageChange}
-          onOnlyNewClick={onOnlyNewClick}
-          onOnlyDialogClick={onOnlyDialogClick}
+          onManagerMessageSend={onManagerMessageSend}
           onNextButtonClick={onNextButtonClick}
           onPrevButtonClick={onPrevButtonClick}
           accountStatus={accountStatus}
@@ -174,14 +186,11 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
     mainTitleMessage,
     dialogIndex,
     dialogIds?.length,
-    onlyDialog,
-    onlyNew,
-    onOnlyNewClick,
-    onOnlyDialogClick,
     onNextButtonClick,
     onPrevButtonClick,
     accountStatus,
     managerMessageValue,
+    visibleSendMessage,
   ]);
 
   const renderContent = useMemo(() => {
@@ -189,7 +198,12 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
       return renderDefaultContent;
     }
 
-    if (dialogIdsLoading || dialogLoading) {
+    if (
+      dialogIdsLoading ||
+      dialogLoading ||
+      postDialogueInfoLoading ||
+      viewAccountDataLoading
+    ) {
       return renderLoadingContent;
     }
 
@@ -202,9 +216,11 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
     dialogIds,
     dialog,
     dialogIdsLoading,
+    postDialogueInfoLoading,
     dialogLoading,
     renderDefaultContent,
     renderNothingFoundContent,
+    viewAccountDataLoading,
     renderLoadingContent,
     renderMainContent,
   ]);

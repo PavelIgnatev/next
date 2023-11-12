@@ -5,20 +5,23 @@ import { Header } from "../header/header";
 
 import { Dialogue } from "../../@types/Dialogue";
 import classes from "./view-dialog.module.css";
+import { ViewDialogTopButtons } from "./components/__top-buttons/view-dialog__buttons";
 
 export interface ViewDialogProps {
+  activeTab: "Все" | "Диалоги" | 'Лиды' | "Ручное управление";
+
   currentDialogIndex: number;
   averageDialogDuration: number;
   averageDialogDurationIfResponse: number;
   messagesToDialog: number;
   managerMessageValue: string;
+  messagesDialogCount: number;
 
   viewDialogIdsData?: Array<string> | null;
   viewDialogInfoData?: Dialogue | null;
   statisticsByDay: { [key: string]: { dateCreated: Date; messages: number }[] };
 
-  onlyDialog: boolean;
-  onlyNew: boolean;
+  visibleSendMessage: boolean;
   viewDialogIdsLoading: boolean;
   viewDialogInfoLoading: boolean;
   viewDialogIdsError: boolean;
@@ -35,40 +38,42 @@ export interface ViewDialogProps {
     stopped?: boolean;
   }) => void;
   onChangeGroupId: (groupId: string) => void;
-  onOnlyNewClick: () => void;
-  onOnlyDialogClick: () => void;
   onNextButtonClick: () => void;
   onPrevButtonClick: () => void;
   onStatistics: () => void;
+  onManagerMessageSend: () => void;
   onManagerMessageChange: (value: string) => void;
+  onChangeActiveTab: (value: "Все" | "Диалоги" | 'Лиды' | "Ручное управление") => void;
 }
 
 export const ViewDialog = (props: ViewDialogProps) => {
   const {
+    activeTab,
     currentDialogIndex,
     averageDialogDuration,
     averageDialogDurationIfResponse,
     messagesToDialog,
-    onlyDialog,
     managerMessageValue,
-    onlyNew,
+    messagesDialogCount,
     statisticsByDay,
+    visibleSendMessage,
     accountStatus,
     onChangeGroupId,
     viewAccountDataLoading,
     viewDialogIdsLoading,
     viewDialogIdsData,
+    postDialogueInfoLoading,
     viewDialogInfoData,
     viewDialogInfoLoading,
     visibleStatisticsInfo,
-    onOnlyNewClick,
-    onOnlyDialogClick,
     onNextButtonClick,
     onPrevButtonClick,
     postDialogueInfo,
     visibleStatistics,
     onManagerMessageChange,
+    onManagerMessageSend,
     onStatistics,
+    onChangeActiveTab,
   } = props;
 
   return (
@@ -76,30 +81,47 @@ export const ViewDialog = (props: ViewDialogProps) => {
       <Header />
       <ViewDialogSearch
         onSearch={onChangeGroupId}
-        loading={viewDialogIdsLoading || viewDialogInfoLoading}
+        loading={
+          viewDialogIdsLoading ||
+          viewDialogInfoLoading ||
+          postDialogueInfoLoading ||
+          viewAccountDataLoading
+        }
         visibleStatistics={visibleStatistics}
         onStatistics={onStatistics}
         dialog={viewDialogInfoData}
         dialogIds={viewDialogIdsData}
       />
+      {viewDialogIdsData &&
+        viewDialogIdsData.length > 0 &&
+        viewDialogInfoData &&
+        !viewDialogInfoLoading &&
+        !viewAccountDataLoading &&
+        !viewDialogIdsLoading &&
+        !postDialogueInfoLoading && (
+          <ViewDialogTopButtons
+            activeTab={activeTab}
+            onChangeActiveTab={onChangeActiveTab}
+          />
+        )}
       {!visibleStatisticsInfo ? (
         <ViewDialogScreen
           accountStatus={accountStatus}
-          onlyNew={onlyNew}
+          messagesDialogCount={messagesDialogCount}
           managerMessageValue={managerMessageValue}
-          onlyDialog={onlyDialog}
           dialogIds={viewDialogIdsData}
           dialog={viewDialogInfoData}
           dialogIdsLoading={viewDialogIdsLoading}
+          postDialogueInfoLoading={postDialogueInfoLoading}
           dialogLoading={viewDialogInfoLoading}
           viewAccountDataLoading={viewAccountDataLoading}
-          onOnlyNewClick={onOnlyNewClick}
-          onOnlyDialogClick={onOnlyDialogClick}
           dialogIndex={currentDialogIndex}
           onNextButtonClick={onNextButtonClick}
           onPrevButtonClick={onPrevButtonClick}
           postDialogueInfo={postDialogueInfo}
           onManagerMessageChange={onManagerMessageChange}
+          onManagerMessageSend={onManagerMessageSend}
+          visibleSendMessage={visibleSendMessage}
         />
       ) : (
         <ViewDialogStatistics

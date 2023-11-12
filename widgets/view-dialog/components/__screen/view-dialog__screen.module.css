@@ -1,19 +1,22 @@
 .viewDialogScreen {
   position: relative;
-  max-width: 700px;
+  max-width: 900px;
   border: 2px solid black;
   margin: 0 auto;
   width: 100%;
   border-radius: 4px;
-  margin-top: 12px;
   padding: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
 }
 
 .viewDialogScreenMain {
-  height: calc(100vh - 26px - 80px - 10px - 70px);
+  height: calc(100vh - 26px - 80px - 10px - 70px - 40px);
   display: flex;
   flex-direction: column;
 }
@@ -40,8 +43,9 @@
   right: 12px;
   font-weight: 500;
 }
+
 .viewDialogScreenMainCount {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .viewDialogScreenMainHref,
@@ -54,6 +58,7 @@
 
   margin-bottom: 24px;
 }
+
 .viewDialogScreenMainSubTitle:after {
   content: "";
   position: absolute;
@@ -62,4 +67,31 @@
   width: calc(100% + 24px);
   height: 2px;
   background: black;
+}
+
+.viewDialogScreenLoading {
+  min-height: 30vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewDialogScreenDefaultMessage,
+.viewDialogScreenNothingFoundMessage,
+.viewDialogScreenLoading {
+  position: relative;
+  width: 100%;
+}
+
+.viewDialogScreenDefaultMessage:after,
+.viewDialogScreenNothingFoundMessage:after,
+.viewDialogScreenLoading:after {
+  content: '';
+  width: calc(100% + 24px);
+  height: 2px;
+  background: black;
+  position: absolute;
+  top: 0;
+  left: -12px;
+  top: -12px;
 }

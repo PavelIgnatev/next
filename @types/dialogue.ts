@@ -12,6 +12,8 @@ export interface Dialogue {
   stopped?: boolean;
   managerMessage?: string;
   accountId?: string;
+  varUsername?: string;
+  lead?: boolean;
 
   dateCreated: Date;
   dateUpdated: Date;

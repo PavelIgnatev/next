@@ -39,8 +39,37 @@
   transition: background-color 0.3s ease;
 }
 
+.viewDialogButton2 {
+  flex: 1;
+  background-color: white;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: 2px solid black;
+  color: black;
+  height: 60px;
+  width: 60px;
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 300;
+  margin-left: 8px;
+}
+
+.viewDialogButtonsWrapper3 {
+  display: flex;
+  width: 100%;
+}
+
 .viewDialogButton:hover {
   background-color: #333;
+  font-weight: 500;
+
 }
 
 .viewDialogButton:disabled {
@@ -52,17 +81,27 @@
   margin-right: 0;
 }
 
+.viewDialogButton2:disabled {
+  background-color: white;
+  cursor: not-allowed;
+}
+
+.viewDialogButton2:hover {
+  background-color: black;
+  color: white;
+}
+
 
 .textareaField {
-  border: 2px solid black;
+  border: 2px solid black !important;
   border-radius: 4px;
   padding: 8px;
   width: 100%;
   max-width: 100%;
-  min-width: 100%;
+  min-width: calc(100% - 68px);
   flex: 1;
   max-height: 60px;
-  font-size: 14px;
+  font-size: 15px;
   min-height: 60px;
   transition: border-color 0.3s ease;
   font-weight: 400;
@@ -74,8 +113,9 @@
   height: 60px;
 }
 
+
 .viewDialogButtonsWrapper2 {
-  margin-bottom: 18px;
+  margin-bottom: 28px;
   position: relative;
 
 }
@@ -86,7 +126,7 @@
   height: 2px;
   background-color: black;
   position: absolute;
-  bottom: -9px;
+  bottom: -15px;
   left: -12px;
 }
 
@@ -94,4 +134,19 @@
   margin-bottom: 6px;
   display: block;
   font-weight: 500;
+}
+
+.viewDialogSendSvg {
+  width: 30px;
+  height: 30px;
+  transform: rotate(25deg);
+  margin-right: 5px;
+}
+
+.edit {
+  color: green;
+}
+
+.edit2 {
+  color: #ff9200;
 }

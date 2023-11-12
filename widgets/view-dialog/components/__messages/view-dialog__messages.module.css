@@ -13,6 +13,7 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  scroll-behavior: smooth;
   padding-right: 16px;
 }
 
@@ -25,6 +26,8 @@
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.4;
+  white-space: pre-wrap;
+  position: relative;
 }
 
 .message:last-child {
@@ -41,4 +44,28 @@
   align-self: flex-start;
   background-color: #f0f0f0;
   color: #333;
+}
+
+.aiManager {
+  max-width: 100%;
+  background: #ffde41e3;
+}
+
+.pending {
+  color: black;
+  font-weight: 500;
+}
+
+.messageContainer {
+  position: relative;
+}
+
+.checkmarkSvg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.aiMessage {
+  border: 1px solid currentColor;
 }

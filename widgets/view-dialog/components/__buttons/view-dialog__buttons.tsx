@@ -1,60 +1,84 @@
 import { Dialogue } from "../../../../@types/Dialogue";
+import { ViewDialogSendSvg } from "../__send-svg/view-dialog__send-svg";
 
 import classes from "./view-dialog__buttons.module.css";
 
 export interface ViewDialogButtonsProps {
   dialog?: Dialogue | null;
-  managerMessageValue: string;
+  managerMessageValue?: string;
   accountStatus: "Не определен" | "Ожидание..." | "Активен" | "Заблокирован";
 
-  onlyDialog: boolean;
-  onlyNew: boolean;
+  visibleSendMessage: boolean;
 
   postDialogueInfo: (data: {
     blocked?: boolean;
     viewed?: boolean;
     stopped?: boolean;
+    lead?: boolean;
   }) => void;
-  onOnlyNewClick: () => void;
-  onOnlyDialogClick: () => void;
   onNextButtonClick: () => void;
   onPrevButtonClick: () => void;
   onManagerMessageChange: (value: string) => void;
+  onManagerMessageSend: () => void;
 }
 
 export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
   const {
     dialog,
-    onlyDialog,
-    onlyNew,
     accountStatus,
+    visibleSendMessage,
     managerMessageValue,
     postDialogueInfo,
-    onOnlyNewClick,
-    onOnlyDialogClick,
     onNextButtonClick,
     onPrevButtonClick,
     onManagerMessageChange,
+    onManagerMessageSend,
   } = props;
 
   return (
     <div className={classes.viewDialogButtons}>
-      {dialog?.stopped && !dialog?.blocked && accountStatus === "Активен" && (
-        <div className={classes.viewDialogButtonsWrapper2}>
-          <label htmlFor="viewDialogButtons" className={classes.labelField}>
-            Ответное сообщение для пользователя (до 1000 символов)
-          </label>
-          <textarea
-            onChange={(e) => {
-              onManagerMessageChange(e.currentTarget.value);
-            }}
-            className={classes.textareaField}
-            value={managerMessageValue}
-            id="viewDialogButtons"
-            maxLength={1000}
-          />
-        </div>
-      )}
+      {dialog?.stopped &&
+        !dialog?.blocked &&
+        visibleSendMessage &&
+        accountStatus === "Активен" && (
+          <div className={classes.viewDialogButtonsWrapper2}>
+            <label htmlFor="viewDialogButtons" className={classes.labelField}>
+              {dialog.managerMessage ? (
+                <div>
+                  <span className={classes.edit2}>Ручное управление. Режим редактирования. </span>
+                  <br />
+                  Введите новое сообщение (до 1000 символов) и сохраните его
+                </div>
+              ) : (
+                <div>
+                  <span className={classes.edit}>Ручное управление. </span>
+                  <br />
+                  Введите сообщение (до 1000 символов) для отправки и сохраните
+                  его
+                </div>
+              )}
+            </label>
+            <div className={classes.viewDialogButtonsWrapper3}>
+              <textarea
+                onChange={(e) => {
+                  onManagerMessageChange(e.currentTarget.value);
+                }}
+                className={classes.textareaField}
+                value={managerMessageValue}
+                id="viewDialogButtons"
+                maxLength={1000}
+              />
+              <button
+                type="submit"
+                disabled={!managerMessageValue}
+                onClick={onManagerMessageSend}
+                className={classes.viewDialogButton2}
+              >
+                <ViewDialogSendSvg className={classes.viewDialogSendSvg} />
+              </button>
+            </div>
+          </div>
+        )}
       <div
         className={classes.viewDialogButtonsWrapper}
         style={dialog?.blocked ? { margin: "0" } : {}}
@@ -69,27 +93,28 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
             Заблокировать
           </button>
         )}
-        {!dialog?.blocked && accountStatus === "Активен" && (
+        {!dialog?.lead && (
           <button
-            onClick={() =>
-              postDialogueInfo({ viewed: true, stopped: !dialog?.stopped })
-            }
+            onClick={() => {
+              postDialogueInfo({ viewed: true, lead: true });
+            }}
             className={classes.viewDialogButton}
           >
-            {!dialog?.stopped ? "Отключить ИИ" : "Включить ИИ"}
+            Перевести в лиды
           </button>
         )}
-      </div>
-      <div className={classes.viewDialogButtonsWrapper}>
-        <button
-          onClick={onOnlyDialogClick}
-          className={classes.viewDialogButton}
-        >
-          {onlyDialog ? "Все сообщения" : "Только диалоги"}
-        </button>
-        <button onClick={onOnlyNewClick} className={classes.viewDialogButton}>
-          {onlyNew ? "Вместе со старыми" : "Только новые"}
-        </button>
+        {!dialog?.blocked &&
+          accountStatus === "Активен" &&
+          !dialog?.stopped && (
+            <button
+              onClick={() =>
+                postDialogueInfo({ viewed: true, stopped: !dialog?.stopped })
+              }
+              className={classes.viewDialogButton}
+            >
+              Отключить ИИ
+            </button>
+          )}
       </div>
       <div className={classes.viewDialogButtonsWrapper}>
         <button

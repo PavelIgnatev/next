@@ -7,12 +7,11 @@ export default async function handler(
   res: NextApiResponse<Array<string> | { message: string }>
 ) {
   try {
-    const { groupId, onlyDialog, onlyNew } = req.query;
+    const { groupId, activeTab } = req.query;
 
     const data = await backendApi.getIdsByGroupId(
       Number(groupId),
-      Boolean(onlyNew && onlyNew === "true"),
-      Boolean(onlyDialog && onlyDialog === "true")
+      String(activeTab) as "Все" | "Диалоги" | "Лиды" | "Ручное управление"
     );
 
     res.status(200).json(data);
