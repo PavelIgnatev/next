@@ -109,25 +109,12 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
           {dialogIds?.length || 0}
         </div>
         <div className={classes.viewDialogScreenMainCount}>
-          <strong>Статус диалога: </strong>
+          <strong>Статус: </strong>
           {dialog?.viewed ? (
-            <span style={{ color: "green" }}>Прочитано</span>
+            <span style={{ color: "green" }}>Просмотрено</span>
           ) : (
-            <span style={{ color: "red" }}>Не прочитано</span>
+            <span style={{ color: "red" }}>Не просмотрено</span>
           )}
-        </div>
-        <div className={classes.viewDialogScreenMainCount}>
-          Статус аккаунта, общающегося с пользователем: &nbsp;
-          <span
-            style={{
-              color:
-                accountStatus === "Активен" || accountStatus === "Ожидание..."
-                  ? "green"
-                  : "red",
-            }}
-          >
-            {accountStatus}
-          </span>
         </div>
         <div className={classes.viewDialogScreenMainHref}>
           <strong>Ссылка на аккаунт: </strong>
@@ -162,6 +149,19 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
         <div className={classes.viewDialogScreenMainSubTitle}>
           <strong>Описание: </strong>
           {dialog?.bio ? dialog.bio : "Отсутствует"}
+        </div>
+        <div className={classes.viewDialogAccountStatus}>
+          <strong>Статус бота: &nbsp;</strong>
+          <span
+            style={{
+              color:
+                accountStatus === "Активен" || accountStatus === "Ожидание..."
+                  ? "green"
+                  : "red",
+            }}
+          >
+            {accountStatus}
+          </span>
         </div>
         <ViewDialogMessages
           messages={dialog?.messages}
