@@ -381,3 +381,12 @@ textarea:focus,
 button:focus {
   outline: none;
 }
+
+:root {
+  /* --rt-color-white: black !important; */
+  --rt-color-dark: black !important;
+
+  --rt-opacity: 0.9;
+  --rt-transition-show-delay: 0.15s;
+  --rt-transition-closing-delay: 0.15s;
+}

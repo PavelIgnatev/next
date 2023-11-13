@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 
 import classes from "./view-dialog__messages.module.css";
+import { Account } from "../../../../@types/Account";
 
 interface ViewDialogMessagesProps {
   messages?: Array<string>;
   managerMessage?: string;
+  viewAccountData?: Account | null;
 }
 
 export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
   messages,
   managerMessage,
+  viewAccountData,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const mainName = messages?.[0]?.split(":")?.[0];
@@ -37,7 +40,7 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
     if (messages) {
       if (managerMessage) {
         // это чтобы рендерить потенциальное сообщение для отправки
-        return [...messages, `${mainName}: ${managerMessage}`];
+        return [...messages, `${viewAccountData?.name || mainName}: ${managerMessage}`];
       }
 
       return messages;
@@ -58,7 +61,7 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
             <div
               key={index}
               className={`${classes.message} ${messageStyle} ${
-                message === `${mainName}: ${managerMessage}`
+                message === `${viewAccountData?.name || mainName}: ${managerMessage}`
                   ? classes.aiMessage
                   : ""
               }`}

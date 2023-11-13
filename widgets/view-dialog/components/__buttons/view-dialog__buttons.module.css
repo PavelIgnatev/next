@@ -19,6 +19,7 @@
 
 .viewDialogButtonsWrapper {
   display: flex;
+  
 }
 
 .viewDialogButtonsWrapper:not(:last-child) {

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { MagnifyingGlass, TailSpin } from "react-loader-spinner";
+import { TailSpin } from "react-loader-spinner";
+import { Tooltip } from "react-tooltip";
 
 import { Dialogue } from "../../../../@types/Dialogue";
 
@@ -7,11 +8,14 @@ import { ViewDialogMessages } from "../__messages/view-dialog__messages";
 import { ViewDialogButtons } from "../__buttons/view-dialog__buttons";
 
 import classes from "./view-dialog__screen.module.css";
+import { Account } from "../../../../@types/Account";
 
 export interface ViewDialogScreenProps {
   dialogIndex: number;
   managerMessageValue?: string;
   messagesDialogCount: number;
+  secondsToRefresh: number;
+  viewAccountData?: Account | null;
 
   dialogIds?: Array<string> | null;
   dialog?: Dialogue | null;
@@ -34,6 +38,17 @@ export interface ViewDialogScreenProps {
   onManagerMessageChange: (value: string) => void;
   onManagerMessageSend: () => void;
 }
+function convertSecondsToMinutes(seconds: number) {
+  var minutes = Math.floor(seconds / 60);
+  var remainingSeconds: number | string = seconds % 60;
+
+  // Добавляем ведущий ноль, если секунды меньше 10
+  if (remainingSeconds < 10) {
+    remainingSeconds = "0" + remainingSeconds;
+  }
+
+  return minutes + ":" + remainingSeconds;
+}
 
 export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
   const {
@@ -48,9 +63,11 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
     dialogIdsLoading,
     postDialogueInfoLoading,
     viewAccountDataLoading,
+    secondsToRefresh,
     dialogLoading,
     onNextButtonClick,
     onPrevButtonClick,
+    viewAccountData,
     onManagerMessageChange,
     onManagerMessageSend,
   } = props;
@@ -78,7 +95,7 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
         </div>
         <div className={classes.viewDialogScreenNothingFoundMessageSubTitle}>
           К сожалению, не удалось найти результаты, соответствующие вашему
-          запросу. Попробуйте изменить параметры поиска или обратитесь за
+          запросу. <br /> Попробуйте изменить параметры поиска или обратитесь за
           помощью.
         </div>
       </div>
@@ -104,68 +121,126 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
   const renderMainContent = useMemo(() => {
     return (
       <div className={classes.viewDialogScreenMain}>
-        <div className={classes.viewDialogScreenMainCount}>
-          <strong>{mainTitleMessage}</strong> {dialogIndex + 1}/
-          {dialogIds?.length || 0}
-        </div>
-        <div className={classes.viewDialogScreenMainCount}>
-          <strong>Статус: </strong>
-          {dialog?.viewed ? (
-            <span style={{ color: "green" }}>Просмотрено</span>
-          ) : (
-            <span style={{ color: "red" }}>Не просмотрено</span>
-          )}
-        </div>
-        <div className={classes.viewDialogScreenMainHref}>
-          <strong>Ссылка на аккаунт: </strong>
-          {dialog?.username ? (
-            <a
-              href={`https://t.me/${dialog?.username}`}
-              target="_blank"
-              className={classes.viewDialogScreenMainA}
+        <div className={classes.wr}>
+          <div className={classes.wrap}>
+            <div className={classes.viewDialogScreenMainCount}>
+              <strong>{mainTitleMessage}</strong> {dialogIndex + 1}/
+              {dialogIds?.length || 0}
+            </div>
+            <div
+              className={classes.viewDialogScreenMainCount}
+              id={dialog?.viewed ? "prosm" : "neprosm"}
+              style={{display: 'inline-block'}}
             >
-              {dialog?.title}
-            </a>
-          ) : (
-            "Отсутствует"
-          )}
-        </div>
-        {dialog?.varUsername && dialog?.varUsername !== dialog?.username && (
-          <div className={classes.viewDialogScreenMainHref}>
-            <strong>Ссылка на аккаунт (альтернативная): </strong>
-            <a
-              href={`https://t.me/${dialog.varUsername}`}
-              target="_blank"
-              className={classes.viewDialogScreenMainA}
-            >
-              {dialog?.title}
-            </a>
+              <strong>Статус: </strong>
+              {dialog?.viewed ? (
+                <span style={{ color: "green" }}>Просмотрено</span>
+              ) : (
+                <span style={{ color: "red" }}>Не просмотрено</span>
+              )}
+              <Tooltip anchorSelect="#prosm">
+                Статус, показывающий, что ранее вы уже просмотрели актуальную
+                версию диалога.
+              </Tooltip>
+              <Tooltip anchorSelect="#neprosm">
+                Статус, показывающий, что вы еще не просматривали актуальную
+                версию диалога.
+              </Tooltip>
+            </div>
+            {dialog?.username && (
+              <div className={classes.viewDialogScreenMainHref}>
+                <strong>Ссылка на аккаунт: </strong>
+                {dialog?.username ? (
+                  <a
+                    href={`https://t.me/${dialog?.username}`}
+                    target="_blank"
+                    className={classes.viewDialogScreenMainA}
+                  >
+                    {dialog?.title}
+                  </a>
+                ) : (
+                  "Отсутствует"
+                )}
+              </div>
+            )}
+            {dialog?.varUsername &&
+              dialog?.varUsername !== dialog?.username && (
+                <div className={classes.viewDialogScreenMainHref}>
+                  <strong>Ссылка на аккаунт: </strong>
+                  <a
+                    href={`https://t.me/${dialog.varUsername}`}
+                    target="_blank"
+                    className={classes.viewDialogScreenMainA}
+                  >
+                    {dialog?.title}
+                  </a>
+                </div>
+              )}
+            {dialog?.phone && (
+              <div className={classes.viewDialogScreenMainPhone}>
+                <strong>Телефон: </strong>
+                {dialog?.phone ? dialog.phone : "Отсутствует"}
+              </div>
+            )}
+            {dialog?.bio && (
+              <div
+                className={classes.viewDialogScreenMainSubTitle}
+                id="not-clickable"
+              >
+                <strong>Описаниe: </strong>
+                {dialog?.bio ? dialog.bio : "Отсутствует"}
+              </div>
+            )}
+            <Tooltip anchorSelect="#not-clickable">{dialog?.bio}</Tooltip>
           </div>
-        )}
-        <div className={classes.viewDialogScreenMainPhone}>
-          <strong>Телефон: </strong>
-          {dialog?.phone ? dialog.phone : "Отсутствует"}
-        </div>
-        <div className={classes.viewDialogScreenMainSubTitle}>
-          <strong>Описание: </strong>
-          {dialog?.bio ? dialog.bio : "Отсутствует"}
-        </div>
-        <div className={classes.viewDialogAccountStatus}>
-          <strong>Статус бота: &nbsp;</strong>
-          <span
-            style={{
-              color:
-                accountStatus === "Активен" || accountStatus === "Ожидание..."
-                  ? "green"
-                  : "red",
-            }}
-          >
-            {accountStatus}
-          </span>
+          <div className={classes.wrap}>
+            <div className={classes.viewDialogAccountStatus}>
+              <div id={accountStatus === "Активен" ? "active" : "neactive"}>
+                <strong>Статус бота: &nbsp;</strong>
+                <span
+                  style={{
+                    color:
+                      accountStatus === "Активен" ||
+                      accountStatus === "Ожидание..."
+                        ? "green"
+                        : "red",
+                  }}
+                >
+                  {accountStatus}
+                </span>
+              </div>
+              <Tooltip anchorSelect="#active">
+                Статус, показывающий, что аккунт, инициировавший <br /> общение
+                свободен от бана и может продолжать диалог.
+              </Tooltip>
+              <Tooltip anchorSelect="#neactive">
+                Статус, показывающий, что аккунт, инициировавший <br /> общение
+                заблокирован, продолжения диалога не будет.
+              </Tooltip>
+              <div id="updater">
+                {secondsToRefresh !== 300 && secondsToRefresh !== 299 && (
+                  <div>
+                    <strong>Обновление через: &nbsp;</strong>
+                    <span
+                      style={{ color: secondsToRefresh < 15 ? "red" : "green" }}
+                    >
+                      {convertSecondsToMinutes(secondsToRefresh)}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <Tooltip anchorSelect="#updater">
+                Автоматическое обновление, актуализирующее информацию о диалоге.
+                <br />
+                Перед обновлением все данные сохраняются.
+              </Tooltip>
+            </div>
+          </div>
         </div>
         <ViewDialogMessages
           messages={dialog?.messages}
           managerMessage={dialog?.managerMessage}
+          viewAccountData={viewAccountData}
         />
         <ViewDialogButtons
           visibleSendMessage={visibleSendMessage}
@@ -184,11 +259,13 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
     dialog,
     postDialogueInfo,
     mainTitleMessage,
+    convertSecondsToMinutes,
     dialogIndex,
     dialogIds?.length,
     onNextButtonClick,
     onPrevButtonClick,
     accountStatus,
+    secondsToRefresh,
     managerMessageValue,
     visibleSendMessage,
   ]);

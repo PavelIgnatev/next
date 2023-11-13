@@ -42,6 +42,12 @@ class FrontendService {
     return axios.post<void>(urls.dialogueInfo, { id, data });
   }
 
+  getDocumentCountsByGroupId(groupId: string) {
+    return this.get<{ [key: string]: number }>(urls.dialogueCounts, {
+      groupId,
+    });
+  }
+
   generateMessages(
     aiRoleBot: string,
     offerDescription: string

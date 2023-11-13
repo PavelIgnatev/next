@@ -6,17 +6,20 @@ import { Header } from "../header/header";
 import { Dialogue } from "../../@types/Dialogue";
 import classes from "./view-dialog.module.css";
 import { ViewDialogTopButtons } from "./components/__top-buttons/view-dialog__buttons";
+import { Account } from "../../@types/Account";
 
 export interface ViewDialogProps {
-  activeTab: "Все" | "Диалоги" | 'Лиды' | "Ручное управление";
+  activeTab: "Все" | "Диалоги" | "Лиды" | "Ручное управление";
+  viewDialogCounts?: { [key: string]: number } | null;
 
   currentDialogIndex: number;
   averageDialogDuration: number;
+  secondsToRefresh: number;
   averageDialogDurationIfResponse: number;
   messagesToDialog: number;
   managerMessageValue: string;
   messagesDialogCount: number;
-
+  viewAccountData?: Account | null;
   viewDialogIdsData?: Array<string> | null;
   viewDialogInfoData?: Dialogue | null;
   statisticsByDay: { [key: string]: { dateCreated: Date; messages: number }[] };
@@ -43,7 +46,9 @@ export interface ViewDialogProps {
   onStatistics: () => void;
   onManagerMessageSend: () => void;
   onManagerMessageChange: (value: string) => void;
-  onChangeActiveTab: (value: "Все" | "Диалоги" | 'Лиды' | "Ручное управление") => void;
+  onChangeActiveTab: (
+    value: "Все" | "Диалоги" | "Лиды" | "Ручное управление"
+  ) => void;
 }
 
 export const ViewDialog = (props: ViewDialogProps) => {
@@ -54,10 +59,13 @@ export const ViewDialog = (props: ViewDialogProps) => {
     averageDialogDurationIfResponse,
     messagesToDialog,
     managerMessageValue,
+    viewDialogCounts,
     messagesDialogCount,
+    secondsToRefresh,
     statisticsByDay,
     visibleSendMessage,
     accountStatus,
+    viewAccountData,
     onChangeGroupId,
     viewAccountDataLoading,
     viewDialogIdsLoading,
@@ -102,6 +110,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
           <ViewDialogTopButtons
             activeTab={activeTab}
             onChangeActiveTab={onChangeActiveTab}
+            viewDialogCounts={viewDialogCounts}
           />
         )}
       {!visibleStatisticsInfo ? (
@@ -115,6 +124,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
           postDialogueInfoLoading={postDialogueInfoLoading}
           dialogLoading={viewDialogInfoLoading}
           viewAccountDataLoading={viewAccountDataLoading}
+          viewAccountData={viewAccountData}
           dialogIndex={currentDialogIndex}
           onNextButtonClick={onNextButtonClick}
           onPrevButtonClick={onPrevButtonClick}
@@ -122,6 +132,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
           onManagerMessageChange={onManagerMessageChange}
           onManagerMessageSend={onManagerMessageSend}
           visibleSendMessage={visibleSendMessage}
+          secondsToRefresh={secondsToRefresh}
         />
       ) : (
         <ViewDialogStatistics

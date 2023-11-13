@@ -50,6 +50,33 @@ class BackendService {
     );
   }
 
+  async getDocumentCountsByGroupId(
+    groupId: number
+  ): Promise<{ [key: string]: number }> {
+    await this.connect();
+
+    const baseQuery: { groupId: number; viewed?: boolean } = {
+      groupId,
+      viewed: false,
+    };
+
+    const queries = [
+      { ...baseQuery },
+      { ...baseQuery, "messages.1": { $exists: true } },
+      { ...baseQuery, lead: true },
+      { ...baseQuery, stopped: true, blocked: { $ne: true } },
+    ];
+
+    const counts = await Promise.all(
+      queries.map(async (query, index) => {
+        const count = await this.collection?.countDocuments(query);
+        return { [`condition${index + 1}`]: count || 0 };
+      })
+    );
+
+    return Object.assign({}, ...counts);
+  }
+
   async getIdsByGroupId(
     groupId: number,
     activeTabe: "Все" | "Диалоги" | "Лиды" | "Ручное управление"

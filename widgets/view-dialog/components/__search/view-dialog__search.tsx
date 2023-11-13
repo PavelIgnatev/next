@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { MagnifyingGlass, ColorRing, TailSpin } from "react-loader-spinner";
+import { TailSpin } from "react-loader-spinner";
+import { Tooltip } from "react-tooltip";
 
 import classes from "./view-dialog__search.module.css";
 import { ViewDialogSvg } from "../__svg/view-dialog__svg";
@@ -56,20 +57,26 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
         placeholder="Ваш идентификатор"
       />
       {dialog && dialogIds && dialogIds.length > 0 && (
-        <button
-          type="button"
-          disabled={!visibleStatistics || loading}
-          onClick={onStatistics}
-          className={classes.viewDialogStatisticsButton}
-        >
-          {visibleStatistics ? (
-            <ViewDialogStatisticsSvg
-              className={classes.viewDialogSearchStatisticsSvg}
-            />
-          ) : (
-            <TailSpin height={30} width={30} radius={0.5} color="black" />
-          )}
-        </button>
+        <>
+          <button
+            type="button"
+            disabled={!visibleStatistics || loading}
+            onClick={onStatistics}
+            className={classes.viewDialogStatisticsButton}
+            id="statistics"
+          >
+            {visibleStatistics ? (
+              <ViewDialogStatisticsSvg
+                className={classes.viewDialogSearchStatisticsSvg}
+              />
+            ) : (
+              <TailSpin height={30} width={30} radius={0.5} color="black" />
+            )}
+          </button>
+          <Tooltip variant="info" anchorSelect="#statistics">
+            Просмотреть статистику эффективности
+          </Tooltip>
+        </>
       )}
 
       <button

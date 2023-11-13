@@ -35,7 +35,7 @@ class BackendAccountService {
 
     return await this.collection.findOne(
       { username },
-      { projection: { banned: 1, _id: 0 } }
+      { projection: { banned: 1, name: 2, _id: 0 } }
     );
   }
 }

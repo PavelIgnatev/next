@@ -16,15 +16,21 @@
 }
 
 .viewDialogScreenMain {
-  height: calc(100vh - 26px - 80px - 10px - 70px - 40px);
+  height: calc(100vh - 26px - 80px - 10px - 70px - 46px);
   display: flex;
   flex-direction: column;
+}
+
+.viewDialogScreenDefaultMessage,
+.viewDialogScreenNothingFoundMessage {
+  font-size: 16px;
 }
 
 .viewDialogScreenDefaultMessage,
 .viewDialogScreenNothingFoundMessage,
 .viewDialogScreenMain {
   width: 100%;
+  
 }
 
 .viewDialogScreenDefaultMessageTitle,
@@ -38,36 +44,46 @@
   margin-top: 14px;
 }
 
-.viewDialogAccountStatus {
-  position: absolute;
-  right: 12px;
-  font-weight: 500;
-}
-
-.viewDialogScreenMainCount {
-  margin-bottom: 4px;
-}
-
-.viewDialogScreenMainHref,
-.viewDialogScreenMainPhone {
-  margin-bottom: 4px;
-}
-
-.viewDialogScreenMainSubTitle {
+.wr {
+  display: flex;
+  width: 100%;
   position: relative;
-
-  margin-bottom: 24px;
+  padding-bottom: 12px;
 }
 
-.viewDialogScreenMainSubTitle:after {
+.wr:after {
   content: "";
   position: absolute;
   left: -12px;
-  bottom: -12px;
+  bottom: 0;
   width: calc(100% + 24px);
   height: 2px;
   background: black;
 }
+
+.viewDialogScreenMainSubTitle {
+  max-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wrap {
+  flex: 1;
+  max-width: 50%;
+}
+
+.viewDialogScreenMainA:hover {
+  text-decoration: underline;
+}
+
+.viewDialogAccountStatus {
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 
 .viewDialogScreenLoading {
   min-height: 30vh;

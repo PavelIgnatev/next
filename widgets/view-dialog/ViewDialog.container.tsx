@@ -30,8 +30,10 @@ export const ViewDialogContainer = () => {
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [currentDialogIndex, setCurrentDialogIndex] = useState<number>(0);
   const [managerMessage, setManagerMessage] = useState("");
+  const [secondsToRefresh, setSecondsToRefresh] = useState(300);
   const [visibleStatisticsInfo, setVisibleStatisticsInfo] =
     useState<boolean>(false);
+  const [intervalId, setIntervalId] = useState(null);
   const [activeTab, setActiveTab] = useState<
     "Все" | "Диалоги" | "Лиды" | "Ручное управление"
   >("Все");
@@ -86,6 +88,22 @@ export const ViewDialogContainer = () => {
     {
       enabled: !!groupId,
       onSuccess: handleViewDialogIdsSuccess,
+      staleTime: Infinity,
+    }
+  );
+  const {
+    data: viewDialogCounts,
+    isFetching: viewDialogCountsLoading,
+    isError: viewDialogCountsError,
+    refetch: refetchViewDialogCounts,
+  } = useQuery(
+    "dialogueCounts",
+    () =>
+      groupId
+        ? FrontendApi.getDocumentCountsByGroupId(groupId)
+        : Promise.resolve(null),
+    {
+      enabled: !!groupId,
       staleTime: Infinity,
     }
   );
@@ -153,15 +171,22 @@ export const ViewDialogContainer = () => {
     if (currentDialogIndex < (viewDialogIdsData?.length || 0) - 1) {
       postDialogueInfoWithoutSuccess({ viewed: true });
       setCurrentDialogIndex((prev) => prev + 1);
+      setSecondsToRefresh(300);
     }
-  }, [currentDialogIndex, viewDialogIdsData, postDialogueInfoWithoutSuccess]);
+  }, [
+    currentDialogIndex,
+    viewDialogIdsData,
+    postDialogueInfoWithoutSuccess,
+    setSecondsToRefresh,
+  ]);
 
   const handlePrevButtonClick = useCallback(() => {
     if (currentDialogIndex > 0) {
       postDialogueInfoWithoutSuccess({ viewed: true });
       setCurrentDialogIndex((prev) => prev - 1);
+      setSecondsToRefresh(300);
     }
-  }, [currentDialogIndex, postDialogueInfoWithoutSuccess]);
+  }, [currentDialogIndex, postDialogueInfoWithoutSuccess, setSecondsToRefresh]);
 
   const handleManagerMessageChange = useCallback(
     (value: string) => {
@@ -273,12 +298,6 @@ export const ViewDialogContainer = () => {
   }, [viewAccountDataLoading, viewAccountData, viewAccountDataError]);
 
   useEffect(() => {
-    if (groupId) {
-      refetchViewDialogIds();
-    }
-  }, [groupId, refetchViewDialogIds]);
-
-  useEffect(() => {
     if (groupId && activeTab) {
       refetchViewDialogIds();
     }
@@ -289,6 +308,13 @@ export const ViewDialogContainer = () => {
       refetchViewDialogs();
     }
   }, [groupId, refetchViewDialogs]);
+
+  useEffect(() => {
+    if (groupId) {
+      setSecondsToRefresh(300);
+      refetchViewDialogCounts();
+    }
+  }, [groupId, setSecondsToRefresh, refetchViewDialogCounts]);
 
   useEffect(() => {
     if (currentId) {
@@ -330,20 +356,59 @@ export const ViewDialogContainer = () => {
   }, [postDialogueInfoError, postDialogueInfoErrorWithoutSuccess]);
 
   useEffect(() => {
+    if (viewDialogCountsError) {
+      toast.error("Произошла ошибка. Попробуйте еще раз.");
+    }
+  }, [viewDialogCountsError]);
+
+  useEffect(() => {
     refetchAccountData();
   }, [accountId, refetchAccountData]);
 
-  /// кругляшки
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!viewAccountData || viewAccountData.banned) {
+        return;
+      }
+
+      setSecondsToRefresh((prevSeconds) => {
+        if (prevSeconds === 1) {
+          refetchViewDialogInfo();
+          refetchAccountData();
+          return 300;
+        } else {
+          return prevSeconds - 1;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [
+    intervalId,
+    setIntervalId,
+    viewAccountData,
+    refetchViewDialogInfo,
+    refetchAccountData,
+    secondsToRefresh,
+  ]);
+
   return (
     <ViewDialog
       activeTab={activeTab}
-      onChangeActiveTab={(value: typeof activeTab) => setActiveTab(value)}
+      viewDialogCounts={viewDialogCounts}
+      secondsToRefresh={secondsToRefresh}
+      onChangeActiveTab={(value: typeof activeTab) => {
+        setActiveTab(value);
+        setSecondsToRefresh(300);
+        refetchViewDialogCounts();
+      }}
       currentDialogIndex={currentDialogIndex}
       postDialogueInfo={postDialogueInfo}
-      viewDialogInfoLoading={viewDialogInfoLoading}
+      viewDialogInfoLoading={viewDialogInfoLoading || viewDialogCountsLoading}
       viewDialogIdsData={viewDialogIdsData}
       viewDialogInfoData={viewDialogInfoData}
       viewDialogIdsLoading={viewDialogIdsLoading}
+      viewAccountData={viewAccountData}
       viewAccountDataLoading={viewAccountDataLoading}
       postDialogueInfoLoading={postDialogueInfoLoading}
       viewDialogIdsError={viewDialogIdsError}

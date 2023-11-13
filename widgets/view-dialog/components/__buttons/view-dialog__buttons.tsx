@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Button, Modal } from "semantic-ui-react";
+
 import { Dialogue } from "../../../../@types/Dialogue";
 import { ViewDialogSendSvg } from "../__send-svg/view-dialog__send-svg";
 
@@ -35,8 +38,62 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
     onManagerMessageSend,
   } = props;
 
+  const [visible, setVisible] = useState<"blocked" | "lead" | "AI" | null>(
+    null
+  );
+
   return (
     <div className={classes.viewDialogButtons}>
+      <Modal
+        dimmer="blurring"
+        open={Boolean(visible)}
+        onClose={() => setVisible(null)}
+      >
+        <Modal.Header>
+          {visible === "blocked"
+            ? "Заблокировать отправку сообщений пользователю"
+            : visible === "lead"
+            ? 'Перевести диалог в папку "Лиды"'
+            : 'Отключить ИИ и перевести диалог в папку "Ручное управление"'}
+          ?
+        </Modal.Header>
+        <Modal.Content>
+          {visible === "AI" && (
+            <strong>
+              После перевода ИИ перестанет формировать свои автоответы, но Вы
+              сможете формировать и отправлять пользователю свои сообщения
+              вручную.
+              <br />
+            </strong>
+          )}
+          Данное действие нельзя отменить. Пожалуйста, будьте внимательны при
+          выполнении операции. <br />
+        </Modal.Content>
+
+        <Modal.Actions>
+          <Button negative onClick={() => setVisible(null)}>
+            Отмена
+          </Button>
+          <Button
+            positive
+            onClick={() => {
+              if (visible === "blocked") {
+                postDialogueInfo({
+                  viewed: true,
+                  blocked: true,
+                  stopped: true,
+                });
+              } else if (visible === "lead") {
+                postDialogueInfo({ viewed: true, lead: true });
+              } else if (visible === "AI") {
+                postDialogueInfo({ viewed: true, stopped: !dialog?.stopped });
+              }
+            }}
+          >
+            Да
+          </Button>
+        </Modal.Actions>
+      </Modal>
       {dialog?.stopped &&
         !dialog?.blocked &&
         visibleSendMessage &&
@@ -45,7 +102,9 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
             <label htmlFor="viewDialogButtons" className={classes.labelField}>
               {dialog.managerMessage ? (
                 <div>
-                  <span className={classes.edit2}>Ручное управление. Режим редактирования. </span>
+                  <span className={classes.edit2}>
+                    Ручное управление. Режим редактирования.
+                  </span>
                   <br />
                   Введите новое сообщение (до 1000 символов) и сохраните его
                 </div>
@@ -79,14 +138,11 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
             </div>
           </div>
         )}
-      <div
-        className={classes.viewDialogButtonsWrapper}
-        style={dialog?.blocked ? { margin: "0" } : {}}
-      >
+      <div className={classes.viewDialogButtonsWrapper}>
         {!dialog?.blocked && (
           <button
             onClick={() => {
-              postDialogueInfo({ viewed: true, blocked: true, stopped: true });
+              setVisible("blocked");
             }}
             className={classes.viewDialogButton}
           >
@@ -96,23 +152,21 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
         {!dialog?.lead && (
           <button
             onClick={() => {
-              postDialogueInfo({ viewed: true, lead: true });
+              setVisible("lead");
             }}
             className={classes.viewDialogButton}
           >
-            Перевести в лиды
+            Перевести в Лиды
           </button>
         )}
         {!dialog?.blocked &&
           accountStatus === "Активен" &&
           !dialog?.stopped && (
             <button
-              onClick={() =>
-                postDialogueInfo({ viewed: true, stopped: !dialog?.stopped })
-              }
+              onClick={() => setVisible("AI")}
               className={classes.viewDialogButton}
             >
-              Отключить ИИ
+              Ручное управление
             </button>
           )}
       </div>
