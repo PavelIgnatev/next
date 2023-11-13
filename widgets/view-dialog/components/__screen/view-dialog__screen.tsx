@@ -143,7 +143,7 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
                 версию диалога.
               </Tooltip>
               <Tooltip anchorSelect="#neprosm">
-                Статус, показывающий, что вы еще не просматривали актуальную
+                Статус, показывающий, что вы еще не просматрели актуальную
                 версию диалога.
               </Tooltip>
             </div>
