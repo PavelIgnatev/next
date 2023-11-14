@@ -159,7 +159,7 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
             Заблокировать
           </button>
         )}
-        {!dialog?.lead && (
+        {!dialog?.lead && !dialog?.blocked && (
           <button
             onClick={() => {
               setVisible("lead");
