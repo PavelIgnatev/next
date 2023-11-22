@@ -17,12 +17,12 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
   viewAccountData,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
-  const userName = varUserName || messages?.[0]?.split(":")?.[0];
+  const userName = (varUserName || messages?.[0]?.split(":")?.[0])?.trim();
 
   const getNameByMessage = useCallback((message: string) => {
     const [name] = message.split(":");
 
-    return name;
+    return name.trim();
   }, []);
 
   useEffect(() => {
@@ -41,9 +41,9 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
         // это чтобы рендерить потенциальное сообщение для отправки
         return [
           ...messages,
-          `${
+          `${(
             viewAccountData?.name || messages?.[0]?.split(":")?.[0]
-          }: ${managerMessage}`,
+          ).trim()}: ${managerMessage}`,
         ];
       }
 
@@ -66,9 +66,9 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
               key={index}
               className={`${classes.message} ${messageStyle} ${
                 message ===
-                `${
+                `${(
                   viewAccountData?.name || messages?.[0]?.split(":")?.[0]
-                }: ${managerMessage}`
+                )?.trim()}: ${managerMessage}`
                   ? classes.aiMessage
                   : ""
               }`}

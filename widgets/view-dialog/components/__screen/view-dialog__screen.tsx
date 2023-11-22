@@ -195,6 +195,12 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
           </div>
           <div className={classes.wrap}>
             <div className={classes.viewDialogAccountStatus}>
+              <div id="name">
+                <strong>Имя бота: &nbsp;</strong>
+                <span>
+                  {viewAccountData?.name ? viewAccountData?.name : "неизвестно"}
+                </span>
+              </div>
               <div id={accountStatus === "Активен" ? "active" : "neactive"}>
                 <strong>Статус бота: &nbsp;</strong>
                 <span
@@ -209,6 +215,9 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
                   {accountStatus}
                 </span>
               </div>
+              <Tooltip anchorSelect="#name">
+                Текущее имя, используемое ботом с AI
+              </Tooltip>
               <Tooltip anchorSelect="#active">
                 Статус, показывающий, что аккунт, инициировавший <br /> общение
                 свободен от бана и может продолжать диалог.
