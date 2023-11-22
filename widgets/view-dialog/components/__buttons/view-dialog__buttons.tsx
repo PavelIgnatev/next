@@ -159,16 +159,19 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
             Заблокировать
           </button>
         )}
-        {!dialog?.lead && !dialog?.blocked && (
-          <button
-            onClick={() => {
-              setVisible("lead");
-            }}
-            className={classes.viewDialogButton}
-          >
-            Перевести в Лиды
-          </button>
-        )}
+        {!dialog?.lead &&
+          !dialog?.blocked &&
+          dialog?.messages &&
+          dialog.messages.length > 0 && (
+            <button
+              onClick={() => {
+                setVisible("lead");
+              }}
+              className={classes.viewDialogButton}
+            >
+              Перевести в Лиды
+            </button>
+          )}
         {!dialog?.blocked &&
           accountStatus === "Активен" &&
           !dialog?.stopped && (

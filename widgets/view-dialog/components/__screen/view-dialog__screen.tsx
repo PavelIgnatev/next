@@ -130,7 +130,7 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
             <div
               className={classes.viewDialogScreenMainCount}
               id={dialog?.viewed ? "prosm" : "neprosm"}
-              style={{display: 'inline-block'}}
+              style={{ display: "inline-block" }}
             >
               <strong>Статус: </strong>
               {dialog?.viewed ? (
@@ -218,16 +218,22 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
                 заблокирован, продолжения диалога не будет.
               </Tooltip>
               <div id="updater">
-                {secondsToRefresh !== 300 && secondsToRefresh !== 299 && (
-                  <div>
-                    <strong>Обновление через: &nbsp;</strong>
-                    <span
-                      style={{ color: secondsToRefresh < 15 ? "red" : "green" }}
-                    >
-                      {convertSecondsToMinutes(secondsToRefresh)}
-                    </span>
-                  </div>
-                )}
+                {secondsToRefresh !== 300 &&
+                  secondsToRefresh !== 299 &&
+                  secondsToRefresh !== 298 &&
+                  secondsToRefresh !== 297 &&
+                  secondsToRefresh !== 296 && (
+                    <div>
+                      <strong>Обновление через: &nbsp;</strong>
+                      <span
+                        style={{
+                          color: secondsToRefresh < 15 ? "red" : "green",
+                        }}
+                      >
+                        {convertSecondsToMinutes(secondsToRefresh)}
+                      </span>
+                    </div>
+                  )}
               </div>
               <Tooltip anchorSelect="#updater">
                 Автоматическое обновление, актуализирующее информацию о диалоге.
@@ -238,6 +244,7 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
           </div>
         </div>
         <ViewDialogMessages
+          userName={dialog?.title}
           messages={dialog?.messages}
           managerMessage={dialog?.managerMessage}
           viewAccountData={viewAccountData}
