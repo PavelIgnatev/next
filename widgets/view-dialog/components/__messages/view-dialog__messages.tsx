@@ -5,19 +5,22 @@ import { Account } from "../../../../@types/Account";
 
 interface ViewDialogMessagesProps {
   messages?: Array<string>;
-  userName?: string;
   managerMessage?: string;
   viewAccountData?: Account | null;
 }
 
 export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
   messages,
-  userName: varUserName,
   managerMessage,
   viewAccountData,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
-  const userName = (varUserName || messages?.[0]?.split(":")?.[0])?.trim();
+
+  const aiName = (
+    viewAccountData?.name ||
+    messages?.[0]?.split(":")?.[0]?.trim() ||
+    "неизвестно"
+  ).trim();
 
   const getNameByMessage = useCallback((message: string) => {
     const [name] = message.split(":");
@@ -39,24 +42,20 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
     if (messages) {
       if (managerMessage) {
         // это чтобы рендерить потенциальное сообщение для отправки
-        return [
-          ...messages,
-          `${(
-            viewAccountData?.name || messages?.[0]?.split(":")?.[0]
-          ).trim()}: ${managerMessage}`,
-        ];
+        return [...messages, `${aiName}: ${managerMessage}`];
       }
 
       return messages;
     }
-  }, [messages, managerMessage, userName, messages]);
+  }, [messages, managerMessage, messages]);
 
   return (
     <div className={classes.dialogContainer}>
       <div className={classes.dialog} ref={dialogRef}>
         {renderMessages?.map((message, index) => {
           const name = getNameByMessage(message);
-          const isRightAligned = name !== userName;
+          const isRightAligned = name === aiName;
+
           const messageStyle = isRightAligned
             ? classes.messageRight
             : classes.messageLeft;
@@ -65,10 +64,7 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
             <div
               key={index}
               className={`${classes.message} ${messageStyle} ${
-                message ===
-                `${(
-                  viewAccountData?.name || messages?.[0]?.split(":")?.[0]
-                )?.trim()}: ${managerMessage}`
+                message === `${aiName}: ${managerMessage}`
                   ? classes.aiMessage
                   : ""
               }`}

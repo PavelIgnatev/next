@@ -253,7 +253,6 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
           </div>
         </div>
         <ViewDialogMessages
-          userName={dialog?.title}
           messages={dialog?.messages}
           managerMessage={dialog?.managerMessage}
           viewAccountData={viewAccountData}
