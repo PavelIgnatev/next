@@ -38,7 +38,15 @@ class FrontendService {
     });
   }
 
-  postDialogueInfo(id: string, data: { blocked?: boolean }) {
+  postDialogueInfo(
+    id: string,
+    data: { blocked?: boolean; viewed?: boolean },
+    incognito: boolean
+  ) {
+    if (incognito) {
+      delete data["viewed"];
+    }
+
     return axios.post<void>(urls.dialogueInfo, { id, data });
   }
 

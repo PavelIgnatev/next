@@ -31,6 +31,10 @@ export const ViewDialogContainer = () => {
   const [currentDialogIndex, setCurrentDialogIndex] = useState<number>(0);
   const [managerMessage, setManagerMessage] = useState("");
   const [secondsToRefresh, setSecondsToRefresh] = useState(300);
+  const [incognito, setIncognito] = useState<boolean>(
+    typeof window !== "undefined" &&
+      localStorage.getItem("incognito") === "true"
+  );
   const [visibleStatisticsInfo, setVisibleStatisticsInfo] =
     useState<boolean>(false);
   const [intervalId, setIntervalId] = useState(null);
@@ -49,7 +53,7 @@ export const ViewDialogContainer = () => {
       managerMessage?: string;
     }) =>
       currentId
-        ? FrontendApi.postDialogueInfo(currentId, data)
+        ? FrontendApi.postDialogueInfo(currentId, data, incognito)
         : Promise.resolve(null)
   );
 
@@ -162,7 +166,7 @@ export const ViewDialogContainer = () => {
   } = useMutation(
     (data: { blocked?: boolean; viewed?: boolean; managerMessage?: string }) =>
       currentId
-        ? FrontendApi.postDialogueInfo(currentId, data)
+        ? FrontendApi.postDialogueInfo(currentId, data, incognito)
         : Promise.resolve(null),
     { onSuccess: () => refetchViewDialogInfo() }
   );
@@ -201,6 +205,11 @@ export const ViewDialogContainer = () => {
       setManagerMessage("");
     }
   }, [postDialogueInfo, managerMessage, viewDialogInfoData]);
+
+  const handleChangeIncognito = () => {
+    localStorage.setItem("incognito", incognito ? "false" : "true");
+    setIncognito((p) => !p);
+  };
 
   const visibleStatistics = useMemo(
     () =>
@@ -402,6 +411,7 @@ export const ViewDialogContainer = () => {
         setSecondsToRefresh(300);
         refetchViewDialogCounts();
       }}
+      incognito={incognito}
       currentDialogIndex={currentDialogIndex}
       postDialogueInfo={postDialogueInfo}
       viewDialogInfoLoading={viewDialogInfoLoading || viewDialogCountsLoading}
@@ -431,6 +441,7 @@ export const ViewDialogContainer = () => {
       managerMessageValue={managerMessage}
       onManagerMessageSend={handleManagerMessageSend}
       messagesDialogCount={viewDialogInfoData?.messages?.length || 0}
+      onChangeIncognito={handleChangeIncognito}
     />
   );
 };

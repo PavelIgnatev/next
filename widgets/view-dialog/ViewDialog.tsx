@@ -11,7 +11,7 @@ import { Account } from "../../@types/Account";
 export interface ViewDialogProps {
   activeTab: "Все" | "Диалоги" | "Лиды" | "Ручное управление";
   viewDialogCounts?: { [key: string]: number } | null;
-
+  incognito: boolean;
   currentDialogIndex: number;
   averageDialogDuration: number;
   secondsToRefresh: number;
@@ -49,11 +49,13 @@ export interface ViewDialogProps {
   onChangeActiveTab: (
     value: "Все" | "Диалоги" | "Лиды" | "Ручное управление"
   ) => void;
+  onChangeIncognito: () => void;
 }
 
 export const ViewDialog = (props: ViewDialogProps) => {
   const {
     activeTab,
+    incognito,
     currentDialogIndex,
     averageDialogDuration,
     averageDialogDurationIfResponse,
@@ -82,6 +84,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
     onManagerMessageSend,
     onStatistics,
     onChangeActiveTab,
+    onChangeIncognito,
   } = props;
 
   return (
@@ -89,6 +92,7 @@ export const ViewDialog = (props: ViewDialogProps) => {
       <Header />
       <ViewDialogSearch
         onSearch={onChangeGroupId}
+        incognito={incognito}
         loading={
           viewDialogIdsLoading ||
           viewDialogInfoLoading ||
@@ -96,9 +100,11 @@ export const ViewDialog = (props: ViewDialogProps) => {
           viewAccountDataLoading
         }
         visibleStatistics={visibleStatistics}
+        visibleStatisticsInfo={visibleStatisticsInfo}
         onStatistics={onStatistics}
         dialog={viewDialogInfoData}
         dialogIds={viewDialogIdsData}
+        onChangeIncognito={onChangeIncognito}
       />
       {viewDialogIdsData &&
         viewDialogIdsData.length > 0 &&
@@ -106,7 +112,8 @@ export const ViewDialog = (props: ViewDialogProps) => {
         !viewDialogInfoLoading &&
         !viewAccountDataLoading &&
         !viewDialogIdsLoading &&
-        !postDialogueInfoLoading && (
+        !postDialogueInfoLoading &&
+        !visibleStatisticsInfo && (
           <ViewDialogTopButtons
             activeTab={activeTab}
             onChangeActiveTab={onChangeActiveTab}
