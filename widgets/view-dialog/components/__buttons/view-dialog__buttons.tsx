@@ -149,7 +149,7 @@ export const ViewDialogButtons = (props: ViewDialogButtonsProps) => {
           </div>
         )}
       <div className={classes.viewDialogButtonsWrapper}>
-        {!dialog?.blocked && (
+        {!dialog?.blocked && accountStatus !== "Заблокирован" && (
           <button
             onClick={() => {
               setVisible("blocked");

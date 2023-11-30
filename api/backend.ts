@@ -62,7 +62,7 @@ class BackendService {
 
     const queries = [
       { ...baseQuery },
-      { ...baseQuery, "messages.1": { $exists: true } },
+      { ...baseQuery, "messages.2": { $exists: true } },
       { ...baseQuery, lead: true },
       { ...baseQuery, stopped: true, blocked: { $ne: true } },
     ];
@@ -87,13 +87,13 @@ class BackendService {
       groupId: number;
       viewed?: boolean;
       lead?: boolean;
-      ["messages.1"]?: { $exists: true };
+      ["messages.2"]?: { $exists: true };
       stopped?: boolean;
       blocked?: { $ne: true };
     } = { groupId };
 
     if (activeTabe === "Диалоги") {
-      query["messages.1"] = { $exists: true };
+      query["messages.2"] = { $exists: true };
     }
 
     if (activeTabe === "Лиды") {

@@ -111,7 +111,7 @@ export const ViewDialogScreen = (props: ViewDialogScreenProps) => {
   }, []);
 
   const mainTitleMessage = useMemo(() => {
-    if (messagesDialogCount > 1) {
+    if (messagesDialogCount > 2) {
       return "Диалог";
     }
 
