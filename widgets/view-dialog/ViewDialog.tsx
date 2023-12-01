@@ -1,7 +1,7 @@
 import { ViewDialogScreen } from "./components/__screen/view-dialog__screen";
 import { ViewDialogSearch } from "./components/__search/view-dialog__search";
 import { ViewDialogStatistics } from "./components/__statistics/view-dialog__statistics";
-import { Header } from "../header/header";
+import { Header } from "../../components/header/header";
 
 import { Dialogue } from "../../@types/Dialogue";
 import classes from "./view-dialog.module.css";

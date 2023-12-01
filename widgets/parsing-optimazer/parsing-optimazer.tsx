@@ -1,4 +1,4 @@
-import { Header } from "../header/header";
+import { Header } from "../../components/header/header";
 import { ViewDialogMessages } from "../view-dialog/components/__messages/view-dialog__messages";
 import { ParsingOptimazerScreen } from "./__screen/parsing-optimazer__screen";
 
