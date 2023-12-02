@@ -8,7 +8,7 @@ import FrontendApi from "../../api/frontend";
 function avgMsgCount(arrays: number[], includeLenOne = true) {
   const result = arrays.reduce(
     (acc, array) => {
-      if (array > 1 || includeLenOne) {
+      if (array > 2 || includeLenOne) {
         acc.totalMsgCount += array;
         acc.totalArraysCount++;
       }
@@ -275,7 +275,7 @@ export const ViewDialogContainer = () => {
     }
 
     return (
-      (viewDialogs.filter((dialog) => dialog.messages && dialog.messages > 1)
+      (viewDialogs.filter((dialog) => dialog.messages && dialog.messages > 2)
         .length /
         viewDialogs.length) *
       100

@@ -1,0 +1,9 @@
+.meta {
+    cursor: pointer;
+}
+
+.meta div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
