@@ -58,14 +58,14 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
         <AutoComplete maxLength={25} />
       </Form.Item>
       <Form.Item label="Роль AI менеджера" name="aiRole" rules={rules}>
-        <TextArea style={{ height: 80, resize: "none" }} maxLength={200} />
+        <TextArea style={{ height: 80, resize: "none" }} maxLength={100} />
       </Form.Item>
       <Form.Item
         label="Описание компании"
         name="companyDescription"
         rules={rules}
       >
-        <TextArea style={{ height: 80, resize: "none" }} maxLength={200} />
+        <TextArea style={{ height: 80, resize: "none" }} maxLength={300} />
       </Form.Item>
       <Form.Item
         label="Целевое действие"
@@ -77,7 +77,7 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
           },
         ]}
       >
-        <TextArea style={{ height: 80, resize: "none" }} maxLength={200} />
+        <TextArea style={{ height: 80, resize: "none" }} maxLength={300} />
       </Form.Item>
       <Form.Item style={{ marginBottom: 0 }}>
         <Button
