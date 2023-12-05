@@ -49,6 +49,7 @@ export const AnalysisId = (props: AnalysisIdProps) => {
       <Typography.Title
         level={1}
         style={{ margin: "1em 0", textAlign: "center" }}
+        className={classes.head}
       >
         Эмуляция диалогов для компании {analysisData?.companyName}
       </Typography.Title>

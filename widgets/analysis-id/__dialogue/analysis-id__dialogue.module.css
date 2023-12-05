@@ -48,3 +48,15 @@
 .viewDialogInput {
     margin-right: 12px;
 }
+
+@media (max-width: 675px) {
+    .viewDialogButtons {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 950px) {
+    .analysisIdDialogue {
+        margin: 0 16px;
+    }
+}
