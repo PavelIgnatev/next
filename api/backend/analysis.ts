@@ -39,6 +39,16 @@ class BackendAnalysisService {
     await this.collection?.insertOne({
       companyId,
       ...data,
+      dialogs: [
+        [
+          { role: "assistant", content: "Здравствуйте!" },
+          {
+            role: "assistant",
+            content:
+              "Можете рассказать, что вас вдохновляет в вашей деятельности?",
+          },
+        ],
+      ],
     });
 
     return companyId;
@@ -77,6 +87,35 @@ class BackendAnalysisService {
     }
 
     return analysis;
+  }
+
+  async postAnalysisByCompanyId(
+    companyId: string,
+    messages: Array<{
+      role: "user" | "assistant" | "system";
+      content: string;
+    }>[]
+  ) {
+    await this.connect();
+    console
+
+    const analysis = await this.collection?.findOne({ companyId });
+
+    if (!analysis) {
+      throw new Error(`Analysis with companyId ${companyId} not found`);
+    }
+
+    await this.collection?.updateOne(
+      { companyId },
+      {
+        $set: {
+          dialogs: messages,
+        },
+      }
+    );
+
+    const updatedAnalysis = await this.collection?.findOne({ companyId });
+    return updatedAnalysis;
   }
 }
 

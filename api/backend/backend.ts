@@ -2,7 +2,7 @@ import axios from "axios";
 const { MongoClient, Db, Collection, ObjectId } = require("mongodb");
 import { config as dotenvConfig } from "dotenv";
 
-import { Dialogue } from "../@types/Dialogue";
+import { Dialogue } from "../../@types/Dialogue";
 
 dotenvConfig();
 
@@ -137,10 +137,11 @@ class BackendService {
   }
 
   async generateLLM(dialogue: Array<string>): Promise<string> {
-    const apiUrl = "http://194.135.25.158/answer/";
+    const apiUrl = "http://81.31.245.212/chat/";
 
     const { data }: { data: string } = await axios.post(apiUrl, {
       dialogue,
+      temperature: 0.5
     });
 
     return data;

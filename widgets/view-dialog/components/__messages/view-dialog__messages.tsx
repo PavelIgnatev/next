@@ -1,5 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import cx from "classnames";
 import classes from "./view-dialog__messages.module.css";
 import { Account } from "../../../../@types/Account";
 
@@ -7,14 +13,21 @@ interface ViewDialogMessagesProps {
   messages?: Array<string>;
   managerMessage?: string;
   viewAccountData?: Account | null;
+  messageLoading?: boolean;
+  className?: string;
 }
 
 export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
   messages,
   managerMessage,
   viewAccountData,
+  messageLoading,
+  className,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string | null>(
+    "Печатает сообщение"
+  );
 
   const aiName = (
     viewAccountData?.name ||
@@ -24,7 +37,6 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
 
   const getNameByMessage = useCallback((message: string) => {
     const [name] = message.split(":");
-
     return name.trim();
   }, []);
 
@@ -38,10 +50,26 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
     }
   }, [messages, managerMessage]);
 
+  useEffect(() => {
+    if (messageLoading) {
+      const intervalId = setInterval(() => {
+        setLoadingMessage((prevMessage) =>
+          prevMessage === "Печатает сообщение..."
+            ? "Печатает сообщение"
+            : prevMessage + "."
+        );
+      }, 500);
+
+      return () => clearInterval(intervalId);
+    } else {
+      setLoadingMessage("Печатает сообщение");
+    }
+  }, [messageLoading]);
+
   const renderMessages = useMemo(() => {
     if (messages) {
       if (managerMessage) {
-        // это чтобы рендерить потенциальное сообщение для отправки
+        // This is to render a potential message to be sent
         return [...messages, `${aiName}: ${managerMessage}`];
       }
 
@@ -50,7 +78,7 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
   }, [messages, managerMessage, messages]);
 
   return (
-    <div className={classes.dialogContainer}>
+    <div className={cx(classes.dialogContainer, className)}>
       <div className={classes.dialog} ref={dialogRef}>
         {renderMessages?.map((message, index) => {
           const name = getNameByMessage(message);
@@ -73,6 +101,11 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
             </div>
           );
         })}
+        {messageLoading  && (
+          <div className={`${classes.message} ${classes.messageLeft}`}>
+            {loadingMessage}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -382,6 +382,11 @@ button:focus {
   outline: none;
 }
 
+.ant-drawer-body {
+  padding: 0 !important;
+}
+
+
 :root {
   /* --rt-color-white: black !important; */
   --rt-color-dark: black !important;

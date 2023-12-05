@@ -20,14 +20,32 @@ class FrontendAnalysisService {
 
   getAnalysis() {
     return this.get<Array<{
+      companyId: string;
+      aiRole: string;
       companyName: string;
       companyDescription: string;
-      companyId: string;
+      goal: string;
     }> | null>(urls.analysis, {});
   }
 
   getAnalysisByCompanyId(companyId: string) {
-    return this.get<analysisCreateData | null>(`${urls.analysis}/${companyId}`);
+    return this.get<{
+      aiRole: string;
+      companyName: string;
+      companyDescription: string;
+      goal: string;
+      dialogs: Array<{ role: "user" | "assistant" | "system"; content: string }>[];
+    } | null>(`${urls.analysis}/${companyId}`);
+  }
+
+  postAnalysisByCompanyId(
+    companyId: string,
+    messages: Array<{
+      role: "assistant" | "system" | "user";
+      content: string;
+    }>[]
+  ) {
+    return axios.post(`${urls.analysis}/${companyId}`, { messages });
   }
 }
 

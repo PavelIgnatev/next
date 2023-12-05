@@ -24,8 +24,8 @@ const rules = [
     message: "Обязательное поле!",
   },
   {
-    min: 50,
-    message: "Минимальная длина 50 символов",
+    min: 25,
+    message: "Минимальная длина 25 символов",
   },
 ];
 
@@ -55,7 +55,7 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
         name="companyName"
         rules={[rules[0]]}
       >
-        <AutoComplete maxLength={200} />
+        <AutoComplete maxLength={25} />
       </Form.Item>
       <Form.Item label="Роль AI менеджера" name="aiRole" rules={rules}>
         <TextArea style={{ height: 80, resize: "none" }} maxLength={200} />

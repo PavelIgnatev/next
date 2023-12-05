@@ -4,3 +4,12 @@
     display: flex;
     flex-direction: column;
 }
+
+@media (max-width: 1050px) {
+    .analysisCreate {
+        min-height: initial;
+        margin-bottom: 1em;
+        margin: 0 16px;
+        max-width: 600px;
+    }
+}

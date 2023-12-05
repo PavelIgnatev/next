@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import backendApi from "../../../api/backend";
+import backendApi from "../../../api/backend/backend";
 import { Dialogue } from "../../../@types/Dialogue";
 
 export default async function handler(

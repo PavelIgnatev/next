@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
 
 import { ViewDialog } from "./ViewDialog";
-import FrontendApi from "../../api/frontend";
+import FrontendApi from "../../api/frontend/frontend";
 
 function avgMsgCount(arrays: number[], includeLenOne = true) {
   const result = arrays.reduce(
