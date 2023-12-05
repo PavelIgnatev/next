@@ -1,7 +1,4 @@
 const { MongoClient, Db, Collection } = require("mongodb");
-import { config as dotenvConfig } from "dotenv";
-
-dotenvConfig();
 
 class BackendAccountService {
   private client: typeof MongoClient | null;

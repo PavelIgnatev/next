@@ -1,10 +1,7 @@
 import axios from "axios";
 const { MongoClient, Db, Collection, ObjectId } = require("mongodb");
-import { config as dotenvConfig } from "dotenv";
 
 import { Dialogue } from "../../@types/Dialogue";
-
-dotenvConfig();
 
 class BackendService {
   private client: typeof MongoClient | null;
