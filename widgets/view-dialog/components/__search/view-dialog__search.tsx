@@ -123,7 +123,7 @@ export const ViewDialogSearch = (props: ViewDialogSearchProps) => {
         )}
       </button>
       <Tooltip variant="info" anchorSelect="#searchS">
-        Поиск турниров по идентификатору
+        Поиск диалогов по идентификатору
       </Tooltip>
     </form>
   );
