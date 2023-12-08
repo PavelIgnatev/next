@@ -8,10 +8,10 @@ import { AnalysisId } from "./analysis-id";
 import { makeRequestGPT } from "../../utils/makeRequestGPT";
 
 const defaultDialogues = [
-  { role: "assistant" as "assistant", content: "Здравствуйте!" },
+  { role: "assistant" as "assistant", content: "Здравствуйте! Меня зовут Евгений." },
   {
     role: "assistant" as "assistant",
-    content: "Можете рассказать, что вас вдохновляет в вашей деятельности?",
+    content: "Обнаружил ваш контакт в бизнес-чате, и меня заинтересовал вопрос о том, чем вы занимаетесь. Можете немного рассказать о себе?",
   },
 ];
 

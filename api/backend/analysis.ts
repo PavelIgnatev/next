@@ -41,11 +41,11 @@ class BackendAnalysisService {
       ...data,
       dialogs: [
         [
-          { role: "assistant", content: "Здравствуйте!" },
+          { role: "assistant", content: "Здравствуйте! Меня зовут Евгений." },
           {
             role: "assistant",
             content:
-              "Можете рассказать, что вас вдохновляет в вашей деятельности?",
+              "Обнаружил ваш контакт в бизнес-чате, и меня заинтересовал вопрос о том, чем вы занимаетесь. Можете немного рассказать о себе?",
           },
         ],
       ],
@@ -97,7 +97,6 @@ class BackendAnalysisService {
     }>[]
   ) {
     await this.connect();
-    console
 
     const analysis = await this.collection?.findOne({ companyId });
 
