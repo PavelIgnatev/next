@@ -8,10 +8,14 @@ import { AnalysisId } from "./analysis-id";
 import { makeRequestGPT } from "../../utils/makeRequestGPT";
 
 const defaultDialogues = [
-  { role: "assistant" as "assistant", content: "Здравствуйте! Меня зовут Евгений." },
   {
     role: "assistant" as "assistant",
-    content: "Обнаружил ваш контакт в бизнес-чате, и меня заинтересовал вопрос о том, чем вы занимаетесь. Можете немного рассказать о себе?",
+    content: "Здравствуйте! Меня зовут Евгений.",
+  },
+  {
+    role: "assistant" as "assistant",
+    content:
+      "Обнаружил ваш контакт в бизнес-чате, и меня заинтересовал вопрос о том, чем вы занимаетесь. Можете немного рассказать о себе?",
   },
 ];
 
@@ -81,23 +85,18 @@ export const AnalysisIdContainer = () => {
         {
           role: "system",
           content: `
-Твоя роль: ${analysisData && analysisData.aiRole ? analysisData.aiRole : ""}.
-Описание компании: ${
+          YOUR ROLE: ${
+            analysisData && analysisData.aiRole ? analysisData.aiRole : ""
+          }.
+          COMPANY DESCRIPTION: ${
             analysisData && analysisData.companyDescription
               ? analysisData.companyDescription
               : ""
           } 
-Целевое действие:  ${
+          DIALOGUE OBJECTIVE: ${
             analysisData && analysisData.goal ? analysisData.goal : ""
           } 
-Твоя задача: отвечать пользователю и вести к целевому действию по воронке (не торопясь и не переходя к следующему этапу раньше, чем это необходимо): 
-1) приветствие
-2) проявление интереса к услуге из описания продукта, но без целевого действия 
-3) выдвигаем оффер с ключевым наводящим вопросом по ключевому действию, учитывая также и контекст компании 
-4) обрабатываем возражение или отвечаем на вопросы 
-5) благодарим пользователя 
-
-Длина ответного сообщения должна быть не более 25 слов. Если ты уже рассказал часть информации из "Описания компании", то повторно рассказывать не надо. Не путай этапы и не беги вперед. Не используй ссылки.  Не возвращай в ответе скобки: []. Если пользователь просит информацию, которая не указана в оффере - пропускай вопрос и продолжай вести по воронке. Отвечай так, будто ты реальный человек. Пиши корректно и по правилам русского языка. Не приветствуй. Не здоровайся. Не извиняйся. Обрабатывай возражения пользователя, пытайся проявить у него интерес к услуге. Если пользователь уже согласен - выдвинь оффер для пользователя из целевого действия и поблагодари его за согласие, не задавая лишних вопросов, а если пока еще не согласен, то в конце ответного сообщения задай наводящий вопрос относительно информации из оффера и описания продукта чтобы проявить интерес. Бессмысленные открытые вопросы задавать запрещено.`,
+YOUR TASK: Respond to the user's incoming messages (with the obligatory leading question at the end) until they reach the PURPOSE of the dialog based on the COMPANY DESCRIPTION. If the user disagrees - try to answer their objections and change their mind. The response should fit within 45 words. If the number of messages in the dialog with the user has exceeded three, only then you can start offering an action from the PURPOSE OF THE DIALOGUE, until then you should only show interest in the service from the COMPANY DESCRIPTION. It is forbidden to ask questions that are not related to the COMPANY DESCRIPTION. Be human and answer as a normal person would answer.`,
         },
         ...dialogue,
       ]),
