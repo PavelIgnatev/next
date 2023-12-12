@@ -138,7 +138,7 @@ class BackendService {
 
     const { data }: { data: string } = await axios.post(apiUrl, {
       dialogue,
-      temperature: 0.5
+      temperature: 1
     });
 
     return data;
