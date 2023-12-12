@@ -86,7 +86,14 @@ export const AnalysisIdDialogue = (props: AnalysisIdDialogueProps) => {
           messageLoading={messageLoading}
         />
 
-        <div className={classes.viewDialogInputWrapper}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSaveMessage(value);
+            setValue("");
+          }}
+          className={classes.viewDialogInputWrapper}
+        >
           <Input
             value={value}
             onChange={(e) => setValue(e.currentTarget.value)}
@@ -96,17 +103,13 @@ export const AnalysisIdDialogue = (props: AnalysisIdDialogueProps) => {
           />
           <Button
             type="primary"
-            onClick={() => {
-              onSaveMessage(value);
-              setValue("");
-            }}
-            loading={false}
+            htmlType="submit"
             size="large"
             disabled={messageLoading}
           >
             Отправить
           </Button>
-        </div>
+        </form>
       </div>
 
       <Drawer
