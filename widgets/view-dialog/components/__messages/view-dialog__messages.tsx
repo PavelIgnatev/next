@@ -101,7 +101,7 @@ export const ViewDialogMessages: React.FC<ViewDialogMessagesProps> = ({
             </div>
           );
         })}
-        {messageLoading  && (
+        {messageLoading && (
           <div className={`${classes.message} ${classes.messageLeft}`}>
             {loadingMessage}
           </div>

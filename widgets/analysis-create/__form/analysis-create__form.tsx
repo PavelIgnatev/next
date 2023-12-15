@@ -1,5 +1,5 @@
 import React from "react";
-import { AutoComplete, Button, Form, Input } from "antd";
+import { AutoComplete, Button, Checkbox, Form, Input } from "antd";
 import { RuleObject } from "antd/es/form";
 
 const { TextArea } = Input;
@@ -14,6 +14,7 @@ interface AnalysisCreateFormProps {
     companyName: string;
     companyDescription: string;
     goal: string;
+    isEnglish: boolean;
   }) => void;
   onFinishFailed: () => void;
 }
@@ -33,9 +34,13 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
   const { loading = false, onFinish, onFinishFailed } = props;
 
   const validateGoalRule = (_: RuleObject, value: string) => {
-    if (!value || !value.includes("Получить согласие")) {
+    if (
+      !value ||
+      (!value.includes("Получить согласие") &&
+        !value.includes("Obtain consent"))
+    ) {
       return Promise.reject(
-        new Error('Фраза "Получить согласие" обязательна!')
+        new Error('Фраза "Получить согласие" или "Obtain consent" обязательна!')
       );
     }
     return Promise.resolve();
@@ -47,7 +52,7 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
       layout="vertical"
       className={classes.analysisCreateForm}
       onFinish={onFinish}
-      initialValues={{ goal: "Получить согласие на" }}
+      initialValues={{ goal: "Получить согласие на", isEnglish: false }}
       onFinishFailed={onFinishFailed}
     >
       <Form.Item
@@ -78,6 +83,13 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
         ]}
       >
         <TextArea style={{ height: 80, resize: "none" }} maxLength={300} />
+      </Form.Item>
+      <Form.Item
+        label="Является ли разбор для англоязычной компании?"
+        name="isEnglish"
+        valuePropName="checked"
+      >
+        <Checkbox />
       </Form.Item>
       <Form.Item style={{ marginBottom: 0 }}>
         <Button

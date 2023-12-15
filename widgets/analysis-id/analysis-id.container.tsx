@@ -19,6 +19,18 @@ const defaultDialogues = [
   },
 ];
 
+const defaultDialoguesEnglish = [
+  {
+    role: "assistant" as "assistant",
+    content: "Hello! My name is Eugene.",
+  },
+  {
+    role: "assistant" as "assistant",
+    content:
+      "Discovered your contact in a business chat and I was interested in asking what you do. Can you tell me a little about yourself?",
+  },
+];
+
 export const AnalysisIdContainer = () => {
   const router = useRouter();
   const { id: companyId, dialogId: queryDialogId } = router.query;
@@ -38,7 +50,6 @@ export const AnalysisIdContainer = () => {
       duration: 5,
     });
   }, []);
-
   const {
     data: analysisData,
     isLoading: analysisLoading,
@@ -85,21 +96,28 @@ export const AnalysisIdContainer = () => {
         {
           role: "system",
           content: `
-          YOUR ROLE: ${
+          Ты выполняешь роль функции-продажника, ты умеешь качественно продавать, проявлять у юзера интерес и подводить к целевому действию, задавая качественные, ударяющие в боль, вопросы. У тебя есть данные о РОЛЬ КОМПАНИИ, ОПИСАНИЕ КОМПАНИИ, ЦЕЛЬ ДИАЛОГА и СООБЩЕНИЯ В ДИАЛОГЕ (история сообщения до текущего момента между Ассистент (assistant) и юзер (user)). Твоя задача вернуть наилучшее сообщение с вопросом для для подведения к ЦЕЛЬ ДИАЛОГА, но оно должно быть не длинее 30 слов. Максимальная длина ответного сообщения - 30 слов. Сам юзер, с которым ты общаешься, ничего о тебе не знает и с тобою раньше не был знаком, также у него может не быть запроса на услугу, но тебе нужно с этим работать. Не возвращай в ответе скобки: []. Если юзер просит информацию, которая не указана в ОПИСАНИЕ КОМПАНИИ - пропускай вопрос. Ты - профессиональный продажник, но не говори юзеру об этом. Не приветствуй юзера. Не извиняйся. Действуй только в рамках того контекста, что имеешь, нельзя придумывать новую услугу, ты должен предлагать только то, что есть внутри ОПИСАНИЕ КОМПАНИИ или ЦЕЛЬ ДИАЛОГА. Если юзер проявил интерес - выдвинь оффер из ЦЕЛЬ ДИАЛОГА и поблагодари его за согласие, не задавая лишних вопросов. 
+          Ниже предоставлена ДОПОЛНИТЕЛЬНАЯ информация:
+          РОЛЬ ВНУТРИ КОМПАНИИ: ${
             analysisData && analysisData.aiRole ? analysisData.aiRole : ""
-          }.
-          COMPANY DESCRIPTION: ${
+          }
+          ОПИСАНИЕ КОМПАНИИ: ${
             analysisData && analysisData.companyDescription
               ? analysisData.companyDescription
               : ""
-          } 
-          DIALOGUE OBJECTIVE: ${
-            analysisData && analysisData.goal ? analysisData.goal : ""
-          } 
-YOUR TASK: Respond to the user's incoming messages (with the obligatory leading question at the end) until they reach the PURPOSE of the dialog based on the COMPANY DESCRIPTION. If the user disagrees - try to answer their objections and change their mind. The response should fit within 45 words. If the number of messages in the dialog with the user has exceeded three, only then you can start offering an action from the PURPOSE OF THE DIALOGUE, until then you should only show interest in the service from the COMPANY DESCRIPTION. It is forbidden to ask questions that are not related to the COMPANY DESCRIPTION. Be human and answer as a normal person would answer.`,
+          }
+          ЦЕЛЬ ДИАЛОГА:  ${
+            analysisData &&
+            analysisData.goal &&
+            dialogue.filter((e) => e.role === "user").length > 1
+              ? analysisData.goal
+              : `Ответить на вопрос юзера, а дальше в одном сообщении рассказать о ОПИСАНИЕ КОМПАНИИ, в конце сообщения поинтересоваться у юзера может ли потенциально ему быть интересно то чем занимается ОПИСАНИЕ КОМПАНИИ.`
+          }
+          Максимальная длина ответного сообщения - 30 слов.`,
         },
         ...dialogue,
       ]),
+
     {
       onSuccess: (content) =>
         setMessages((p) => {
@@ -162,7 +180,10 @@ YOUR TASK: Respond to the user's incoming messages (with the obligatory leading 
       );
     } else if (messages && messages[dialogId]) {
       setMessages((p) => {
-        const newMessages = [...p, defaultDialogues];
+        const newMessages = [
+          ...p,
+          analysisData?.isEnglish ? defaultDialoguesEnglish : defaultDialogues,
+        ];
 
         postAnalysisByCompanyId({
           messages: newMessages,
@@ -187,7 +208,9 @@ YOUR TASK: Respond to the user's incoming messages (with the obligatory leading 
       setMessages((p) => {
         p[dialogId] = [...p[dialogId], { role: "user", content: message }];
 
-        postGenerateLLM([...p[dialogId], { role: "user", content: message }]);
+        try {
+          postGenerateLLM(p[dialogId]);
+        } catch {}
 
         return p;
       });

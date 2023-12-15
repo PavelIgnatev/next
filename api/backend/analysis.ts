@@ -31,23 +31,39 @@ class BackendAnalysisService {
     companyName: string;
     companyDescription: string;
     goal: string;
+    isEnglish: boolean;
   }) {
     await this.connect();
-
+    
     const companyId = String(Math.random()).substr(2, 12);
 
     await this.collection?.insertOne({
       companyId,
       ...data,
       dialogs: [
-        [
-          { role: "assistant", content: "Здравствуйте! Меня зовут Евгений." },
-          {
-            role: "assistant",
-            content:
-              "Обнаружил ваш контакт в бизнес-чате, и меня заинтересовал вопрос о том, чем вы занимаетесь. Можете немного рассказать о себе?",
-          },
-        ],
+        data.isEnglish
+          ? [
+              {
+                role: "assistant",
+                content: "Hello! My name is Eugene.",
+              },
+              {
+                role: "assistant",
+                content:
+                  "Discovered your contact in a business chat and I was interested in asking what you do. Can you tell me a little about yourself?",
+              },
+            ]
+          : [
+              {
+                role: "assistant",
+                content: "Здравствуйте! Меня зовут Евгений.",
+              },
+              {
+                role: "assistant",
+                content:
+                  "Обнаружил ваш контакт в бизнес-чате, и меня заинтересовал вопрос о том, чем вы занимаетесь. Можете немного рассказать о себе?",
+              },
+            ],
       ],
     });
 

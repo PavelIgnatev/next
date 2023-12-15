@@ -7,7 +7,8 @@ export default async function handler(
   res: NextApiResponse<string | { message: string }>
 ) {
   try {
-    const { aiRole, companyDescription, companyName, goal } = req.body;
+    const { aiRole, companyDescription, companyName, goal, isEnglish = false } =
+      req.body;
 
     if (!aiRole || !companyDescription || !goal || !companyName) {
       throw new Error("Недостаточное количество аргументов");
@@ -18,6 +19,7 @@ export default async function handler(
       companyDescription,
       companyName,
       goal,
+      isEnglish,
     });
 
     res.status(200).json(companyId);
