@@ -3,12 +3,12 @@ import { TailSpin } from "react-loader-spinner";
 import { Tooltip } from "react-tooltip";
 
 import { Dialogue } from "../../../../@types/Dialogue";
+import { Account } from "../../../../@types/Account";
 
 import { ViewDialogMessages } from "../__messages/view-dialog__messages";
 import { ViewDialogButtons } from "../__buttons/view-dialog__buttons";
 
 import classes from "./view-dialog__screen.module.css";
-import { Account } from "../../../../@types/Account";
 
 export interface ViewDialogScreenProps {
   dialogIndex: number;
