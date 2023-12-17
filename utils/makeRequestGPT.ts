@@ -50,6 +50,7 @@ export async function makeRequestGPT(
         message.toLowerCase().includes("них ответит") ||
         message.toLowerCase().includes("чем могу") ||
         message.toLowerCase().includes("недопониман") ||
+        message.toLowerCase().includes("неудобств") ||
         message.toLowerCase().includes("путаниц") ||
         message.toLowerCase().includes("полезен быть") ||
         message.toLowerCase().includes("быть полезен") ||
