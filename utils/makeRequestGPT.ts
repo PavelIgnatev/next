@@ -46,6 +46,7 @@ export async function makeRequestGPT(
         message.toLowerCase().includes("описания компании") ||
         message.toLowerCase().includes("описании компании") ||
         message.toLowerCase().includes("цель диалога") ||
+        message.toLowerCase().includes("моя роль") ||
         message.toLowerCase().includes("цели диалога") ||
         message.toLowerCase().includes("готов ответит") ||
         message.toLowerCase().includes("них ответит") ||
