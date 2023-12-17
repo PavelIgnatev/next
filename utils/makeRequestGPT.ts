@@ -44,6 +44,16 @@ export async function makeRequestGPT(
         message.toLowerCase().includes("вас интересует") ||
         message.toLowerCase().includes("описание компании") ||
         message.toLowerCase().includes("описания компании") ||
+        message.toLowerCase().includes("конкретные вопрос") ||
+        message.toLowerCase().includes("какие вопро") ||
+        message.toLowerCase().includes("наших услуг") ||
+        message.toLowerCase().includes("конкретный вопрос") ||
+        message.toLowerCase().includes("по поводу услуг") ||
+        message.toLowerCase().includes("по поводу наших") ||
+        message.toLowerCase().includes("вопросы по этому") ||
+        message.toLowerCase().includes("возникнут вопросы") ||
+        message.toLowerCase().includes("возникли у вас") ||
+        message.toLowerCase().includes("у вас возникли") ||
         message.toLowerCase().includes("описании компании") ||
         message.toLowerCase().includes("цель диалога") ||
         message.toLowerCase().includes("моя роль") ||
@@ -51,9 +61,6 @@ export async function makeRequestGPT(
         message.toLowerCase().includes("готов ответит") ||
         message.toLowerCase().includes("них ответит") ||
         message.toLowerCase().includes("чем могу") ||
-        message.toLowerCase().includes("недопониман") ||
-        message.toLowerCase().includes("неудобств") ||
-        message.toLowerCase().includes("путаниц") ||
         message.toLowerCase().includes("полезен быть") ||
         message.toLowerCase().includes("быть полезен") ||
         message.toLowerCase().includes("пошло не так") ||
