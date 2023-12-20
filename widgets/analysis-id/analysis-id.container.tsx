@@ -102,14 +102,14 @@ export const AnalysisIdContainer = () => {
         {
           role: "user",
           content: await makeRequestComplete(`
-    ТВОЕ ИМЯ: Павел
+    ТВОЕ ИМЯ: Евгений
     ТВОЯ РОЛЬ: ${analysisData && analysisData.aiRole ? analysisData.aiRole : ""}
     ОПИСАНИЕ КОМПАНИИ: ${
       analysisData && analysisData.companyDescription
         ? analysisData.companyDescription
         : ""
     }
-    ЦЕЛЬ ДЛЯ Павел: ответить на сообщениe(я) пользователя Евгений, проявить у него интерес к предложению компании. ${
+    ЦЕЛЬ ДЛЯ Евгений: ответить на сообщениe(я) пользователя Павел, проявить у него интерес к предложению компании. ${
       analysisData &&
       analysisData.goal &&
       dialogue.filter((e) => e.role === "user").length > 1
@@ -118,14 +118,13 @@ export const AnalysisIdContainer = () => {
         : ""
     }
 
-    
     ${dialogue
       .map(
         (dialog) =>
-          `# ${dialog.role === "user" ? "Евгений" : "Павел"}: ${dialog.content}`
+          `# ${dialog.role === "user" ? "Павел" : "Евгений"}: ${dialog.content}`
       )
       .join("\n")}
-    # Павел:`),
+    # Евгений:`),
         },
       ]),
     {
