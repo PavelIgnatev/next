@@ -138,7 +138,17 @@ class BackendService {
 
     const { data }: { data: string } = await axios.post(apiUrl, {
       dialogue,
-      temperature: 1
+      temperature: 1,
+    });
+
+    return data;
+  }
+
+  async generateComplete(prompt: string): Promise<string> {
+    const apiUrl = "http://81.31.245.212/complete/";
+
+    const { data }: { data: string } = await axios.post(apiUrl, {
+      prompt,
     });
 
     return data;

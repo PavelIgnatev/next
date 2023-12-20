@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import FrontendAnalysisApi from "../../api/frontend/analysis";
 import { AnalysisId } from "./analysis-id";
+import { makeRequestComplete } from "../../utils/makeRequestComplete";
 import { makeRequestGPT } from "../../utils/makeRequestGPT";
 
 const defaultDialogues = [
@@ -86,7 +87,7 @@ export const AnalysisIdContainer = () => {
     isLoading: postGenerateLLMLoading,
     isError: postGenerateLLMError,
   } = useMutation(
-    (
+    async (
       dialogue: Array<{
         role: "assistant" | "system" | "user";
         content: string;
@@ -95,35 +96,40 @@ export const AnalysisIdContainer = () => {
       makeRequestGPT([
         {
           role: "system",
-          content: `
-          Тебе в виде констант были переданы: РОЛЬ, ОПИСАНИЕ КОМПАНИИ, ЦЕЛЕВОЕ ДЕЙСТВИЕ. Твоя задача вжиться в эту роль. В ответе ты должен вернуть сообщение для подведения к ЦЕЛЕВОЕ ДЕЙСТВИЕ с вопросом 'интересно ли ему узнать больше о ОПИСАНИЕ КОМПАНИИ (значение посмотри в контексте)' для дальнейшего продолжения диалога. Вы умеете хорошо продавать, по-умному обрабатывать возражения, проявлять интерес у собеседника к услуге и подводить его к целевому действию. Максимальная длина - 30 слов. Если пользователь запрашивает информацию, которой нет в ОПИСАНИИ КОМПАНИИ, пропустите вопрос. Действуйте только в рамках имеющегося контекста, вы не можете придумывать новые услуги, вы должны предлагать только то, что указано в ОПИСАНИИ КОМПАНИИ или ЦЕЛИ ДИАЛОГА. Если пользователь проявляет интерес, выдвиньте предложение из ЦЕЛЕВОЕ ДЕЙСВТИЕ и поблагодарите его за согласие, не задавая лишних вопросов. Не приветствуйте пользователя. Не извиняйтесь перед пользователем и не просите у него прощения. 
-          ${
-            dialogue.filter((e) => e.role === "user").length > 1 &&
-            "Если пользователь отказывается от услуги - попроси у него обратную связь и уточни, что тебе это правда очень важно."
-          } Максимальная длина - 30 слов. 
-          Ниже предоставлена ДОПОЛНИТЕЛЬНАЯ информация:
-          РОЛЬ: ${
-            analysisData && analysisData.aiRole ? analysisData.aiRole : ""
-          }
-          ОПИСАНИЕ КОМПАНИИ: ${
-            analysisData && analysisData.companyDescription
-              ? analysisData.companyDescription
-              : ""
-          }
-          ЦЕЛЕВОЕ ДЕЙСТВИЕ:  ${
-            analysisData &&
-            analysisData.goal &&
-            dialogue.filter((e) => e.role === "user").length > 1
-              ? analysisData.goal
-              : ""
-          }
-          Максимальная длина ответного сообщения - 30 слов.`,
+          content:
+            "Ты выполняешь роль функции, которая исправляет ошибки в предложении. Увеличивать или уменьшать длину сообщения запрещено, необходимо только исправить синтаксические ошибки или ошибки пунктуации. В ответе вернуть только результат - сообщение на русском языке, без дополнительных префиксов",
         },
-        ...dialogue,
-      ]),
+        {
+          role: "user",
+          content: await makeRequestComplete(`
+    ТВОЕ ИМЯ: Павел
+    ТВОЯ РОЛЬ: ${analysisData && analysisData.aiRole ? analysisData.aiRole : ""}
+    ОПИСАНИЕ КОМПАНИИ: ${
+      analysisData && analysisData.companyDescription
+        ? analysisData.companyDescription
+        : ""
+    }
+    ЦЕЛЬ ДЛЯ Павел: ответить на сообщениe(я) пользователя Евгений, проявить у него интерес к предложению компании. ${
+      analysisData &&
+      analysisData.goal &&
+      dialogue.filter((e) => e.role === "user").length > 1
+        ? "В случае, если пользователь проявил активный интерес к предложению - твоей задачей является " +
+          analysisData.goal
+        : ""
+    }
 
+    
+    ${dialogue
+      .map(
+        (dialog) =>
+          `# ${dialog.role === "user" ? "Евгений" : "Павел"}: ${dialog.content}`
+      )
+      .join("\n")}
+    # Павел:`),
+        },
+      ]),
     {
-      onSuccess: (content) =>
+      onSuccess: (content) => {
         setMessages((p) => {
           p[dialogId] = [
             ...p[dialogId],
@@ -136,7 +142,8 @@ export const AnalysisIdContainer = () => {
           });
 
           return p;
-        }),
+        });
+      },
     }
   );
 
@@ -147,10 +154,14 @@ export const AnalysisIdContainer = () => {
       dialogId !== analysisData.dialogs.length
     ) {
       if (initialDialogId >= 0 && analysisData.dialogs[initialDialogId]) {
-        setDialogId(initialDialogId);
-        setMessages(analysisData.dialogs);
+        if (initialDialogId !== dialogId) {
+          setDialogId(initialDialogId);
+
+          setMessages(analysisData.dialogs);
+        }
       } else {
         setDialogId(analysisData.dialogs.length - 1);
+
         setMessages(analysisData.dialogs);
         router.replace(
           {
@@ -166,7 +177,7 @@ export const AnalysisIdContainer = () => {
         );
       }
     }
-  }, [analysisData]);
+  }, [analysisData, dialogId]);
 
   useEffect(() => {
     if (postGenerateLLMError) {

@@ -63,6 +63,12 @@ class FrontendService {
 
     return result as any;
   }
+
+  generateComplete(prompt: string): Promise<{ data: string }> {
+    const result = axios.post(urls.chatGptGenerateComplete, { prompt });
+
+    return result as any;
+  }
 }
 
 const FrontendApi = new FrontendService();

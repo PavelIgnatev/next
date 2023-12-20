@@ -7,6 +7,7 @@ export const urls = {
   accountData: "/api/account/data",
 
   chatGptGenerate: "/api/chatgpt/generate",
+  chatGptGenerateComplete: "/api/chatgpt/complete",
 
   analysisCreate: "/api/analysis/create",
   analysis: "/api/analysis/",
