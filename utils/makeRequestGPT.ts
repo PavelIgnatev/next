@@ -9,7 +9,8 @@ export async function makeRequestGPT(
     role: "assistant" | "system" | "user";
     content: string;
   }>,
-  filter = true
+  filter = true,
+  error = true
 ) {
   while (true) {
     try {
@@ -36,6 +37,7 @@ export async function makeRequestGPT(
       }
 
       if (
+        error &&
         message.toLowerCase().includes("чем я") ||
         message.toLowerCase().includes("могу помоч") ||
         message.toLowerCase().includes("вам помоч") ||
