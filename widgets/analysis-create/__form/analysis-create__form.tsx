@@ -1,8 +1,9 @@
 import React from "react";
-import { AutoComplete, Button, Checkbox, Form, Input } from "antd";
+import { AutoComplete, Button, Form, Input, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 
 const { TextArea } = Input;
+const { Option } = Select;
 
 import classes from "./analysis-create__form.module.css";
 
@@ -14,7 +15,7 @@ interface AnalysisCreateFormProps {
     companyName: string;
     companyDescription: string;
     goal: string;
-    isEnglish: boolean;
+    language: string;
   }) => void;
   onFinishFailed: () => void;
 }
@@ -52,7 +53,7 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
       layout="vertical"
       className={classes.analysisCreateForm}
       onFinish={onFinish}
-      initialValues={{ goal: "Получить согласие на", isEnglish: false }}
+      initialValues={{ goal: "Получить согласие на", language: "РУССКИЙ" }}
       onFinishFailed={onFinishFailed}
     >
       <Form.Item
@@ -84,12 +85,11 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
       >
         <TextArea style={{ height: 80, resize: "none" }} maxLength={300} />
       </Form.Item>
-      <Form.Item
-        label="Является ли разбор для англоязычной компании?"
-        name="isEnglish"
-        valuePropName="checked"
-      >
-        <Checkbox />
+      <Form.Item label="Язык разбора" name="language" rules={[rules[0]]}>
+        <Select defaultValue="РУССКИЙ">
+          <Option value="РУССКИЙ">РУССКИЙ</Option>
+          <Option value="АНГЛИЙСКИЙ">АНГЛИЙСКИЙ</Option>
+        </Select>
       </Form.Item>
       <Form.Item style={{ marginBottom: 0 }}>
         <Button

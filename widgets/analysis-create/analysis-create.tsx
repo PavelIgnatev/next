@@ -13,7 +13,7 @@ interface AnalysisCreateProps {
     companyName: string;
     companyDescription: string;
     goal: string;
-    isEnglish: boolean;
+    language: string;
   }) => void;
   onFinishFailed: () => void;
 }

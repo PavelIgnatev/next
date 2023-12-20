@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse<string | { message: string }>
 ) {
   try {
-    const { aiRole, companyDescription, companyName, goal, isEnglish = false } =
+    const { aiRole, companyDescription, companyName, goal, language = "РУССКИЙ" } =
       req.body;
 
     if (!aiRole || !companyDescription || !goal || !companyName) {
@@ -19,7 +19,7 @@ export default async function handler(
       companyDescription,
       companyName,
       goal,
-      isEnglish,
+      language,
     });
 
     res.status(200).json(companyId);

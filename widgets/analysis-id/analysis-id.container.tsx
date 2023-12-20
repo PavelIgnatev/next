@@ -68,6 +68,8 @@ export const AnalysisIdContainer = () => {
     }
   );
 
+  const { language = "РУССКИЙ" } = analysisData || {};
+
   const { mutate: postAnalysisByCompanyId } = useMutation(
     ({
       companyId,
@@ -97,8 +99,7 @@ export const AnalysisIdContainer = () => {
         [
           {
             role: "system",
-            content:
-              "Ты выполняешь роль функции, которая исправляет ошибки в предложении. Увеличивать или уменьшать длину сообщения запрещено, необходимо только исправить синтаксические ошибки или ошибки пунктуации. В ответе вернуть только результат - сообщение на русском языке, без дополнительных префиксов",
+            content: `Ты выполняешь роль функции, исправляющей ошибки и переводящей переданное сообщение на ${language} язык. Увеличивать или уменьшать длину сообщения запрещено, необходимо только исправить синтаксические ошибки вместе с ошибками пунктуации. В ответе вернуть только результат - исправленное сообщение, основной язык в котором - ${language}, без дополнительных префиксов. Только ${language} язык.`,
           },
           {
             role: "user",
@@ -119,7 +120,8 @@ export const AnalysisIdContainer = () => {
         : ""
     }
 
-    ${dialogue
+    ${[...dialogue]
+      .slice(-8)
       .map(
         (dialog) =>
           `# ${dialog.role === "user" ? "Павел" : "Евгений"}: ${dialog.content}`
@@ -129,7 +131,8 @@ export const AnalysisIdContainer = () => {
           },
         ],
         true,
-        false
+        false,
+        0.7
       ),
     {
       onSuccess: (content) => {
@@ -157,7 +160,7 @@ export const AnalysisIdContainer = () => {
       dialogId !== analysisData.dialogs.length
     ) {
       if (initialDialogId >= 0 && analysisData.dialogs[initialDialogId]) {
-        if (initialDialogId !== dialogId) {
+        if (initialDialogId !== dialogId || !dialogId) {
           setDialogId(initialDialogId);
 
           setMessages(analysisData.dialogs);
@@ -200,7 +203,7 @@ export const AnalysisIdContainer = () => {
       setMessages((p) => {
         const newMessages = [
           ...p,
-          analysisData?.isEnglish ? defaultDialoguesEnglish : defaultDialogues,
+          analysisData?.language === 'АНГЛИЙСКИЙ' ? defaultDialoguesEnglish : defaultDialogues,
         ];
 
         postAnalysisByCompanyId({

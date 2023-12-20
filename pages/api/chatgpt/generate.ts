@@ -7,8 +7,8 @@ export default async function handler(
   res: NextApiResponse<any | { message: string }>
 ) {
   try {
-    const { dialogue } = req.body;
-    const data = await backendApi.generateLLM(dialogue as Array<string>);
+    const { dialogue, temperature = 1 } = req.body;
+    const data = await backendApi.generateLLM(dialogue as Array<string>, temperature);
 
     res.status(200).json(data);
   } catch ({ message }: any) {

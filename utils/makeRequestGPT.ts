@@ -10,11 +10,12 @@ export async function makeRequestGPT(
     content: string;
   }>,
   filter = true,
-  error = true
+  error = true,
+  temperature = 1
 ) {
   while (true) {
     try {
-      const response = await FrontendApi.generateMessages(dialogue);
+      const response = await FrontendApi.generateMessages(dialogue, temperature);
       const { data } = response;
 
       let pattern =

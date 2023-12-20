@@ -7,7 +7,7 @@ type analysisCreateData = {
   companyName: string;
   companyDescription: string;
   goal: string;
-  isEnglish: boolean;
+  language: string;
 };
 
 class FrontendAnalysisService {
@@ -39,7 +39,7 @@ class FrontendAnalysisService {
         role: "user" | "assistant" | "system";
         content: string;
       }>[];
-      isEnglish?: boolean;
+      language?: string;
     } | null>(`${urls.analysis}/${companyId}`);
   }
 

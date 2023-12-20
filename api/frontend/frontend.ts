@@ -57,9 +57,10 @@ class FrontendService {
   }
 
   generateMessages(
-    dialogue: Array<{ role: "assistant" | "system" | "user"; content: string }>
+    dialogue: Array<{ role: "assistant" | "system" | "user"; content: string }>,
+    temperature: number
   ): Promise<{ data: string }> {
-    const result = axios.post(urls.chatGptGenerate, { dialogue });
+    const result = axios.post(urls.chatGptGenerate, { dialogue, temperature });
 
     return result as any;
   }

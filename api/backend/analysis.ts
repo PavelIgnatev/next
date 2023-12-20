@@ -31,7 +31,7 @@ class BackendAnalysisService {
     companyName: string;
     companyDescription: string;
     goal: string;
-    isEnglish: boolean;
+    language: string;
   }) {
     await this.connect();
     
@@ -41,7 +41,7 @@ class BackendAnalysisService {
       companyId,
       ...data,
       dialogs: [
-        data.isEnglish
+        data.language === "АНГЛИЙСКИЙ"
           ? [
               {
                 role: "assistant",

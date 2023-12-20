@@ -133,12 +133,15 @@ class BackendService {
     return result || [];
   }
 
-  async generateLLM(dialogue: Array<string>): Promise<string> {
+  async generateLLM(
+    dialogue: Array<string>,
+    temperature: number
+  ): Promise<string> {
     const apiUrl = "http://81.31.245.212/chat/";
 
     const { data }: { data: string } = await axios.post(apiUrl, {
       dialogue,
-      temperature: 1,
+      temperature,
     });
 
     return data;

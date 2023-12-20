@@ -11,7 +11,7 @@ type analysisCreateData = {
   companyName: string;
   companyDescription: string;
   goal: string;
-  isEnglish: boolean;
+  language: string;
 };
 
 const errorText = "Неизвестная ошибка, попробуйте еще раз.";
