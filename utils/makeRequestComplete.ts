@@ -27,7 +27,12 @@ export async function makeRequestComplete(prompt: string) {
         .replace(pattern, "")
         .trim();
 
-      if (message.includes("[") || message.includes("]")) {
+      if (
+        message.includes("[") ||
+        message.includes("]") ||
+        message.includes("(") ||
+        message.includes(")")
+      ) {
         console.log(
           `\x1b[4mПотенциальное сообщение:\x1b[0m \x1b[36m${message}\x1b[0m`
         );
@@ -64,6 +69,13 @@ export async function makeRequestComplete(prompt: string) {
           .replace("Доброе утро", "")
           .replace("Добрый вечер", "")
           .replace("Добрый день", "")
+          .replace("привет", "")
+          .replace("здравствуйте", "")
+          .replace("приветствую", "")
+          .replace("здравствуй", "")
+          .replace("доброе утро", "")
+          .replace("добрый вечер", "")
+          .replace("добрый день", "")
       );
     } catch (error: any) {
       console.log(`Ошибка запроса. ${error.message}`);
