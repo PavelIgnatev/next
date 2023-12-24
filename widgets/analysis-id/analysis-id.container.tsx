@@ -95,15 +95,7 @@ export const AnalysisIdContainer = () => {
         content: string;
       }>
     ) =>
-      makeRequestGPT(
-        [
-          {
-            role: "system",
-            content: `Ты выполняешь роль функции, исправляющей ошибки и переводящей переданное сообщение на ${language} язык. Увеличивать или уменьшать длину сообщения запрещено, необходимо только исправить синтаксические ошибки вместе с ошибками пунктуации. В ответе вернуть только результат - исправленное сообщение, основной язык в котором - ${language}, без дополнительных префиксов. Только ${language} язык.`,
-          },
-          {
-            role: "user",
-            content: await makeRequestComplete(`
+      makeRequestComplete(`
     ТВОЕ ИМЯ: Евгений
     ТВОЯ РОЛЬ: ${analysisData && analysisData.aiRole ? analysisData.aiRole : ""}
     ОПИСАНИЕ КОМПАНИИ: ${
@@ -128,12 +120,6 @@ export const AnalysisIdContainer = () => {
       )
       .join("\n")}
     # Евгений:`),
-          },
-        ],
-        true,
-        false,
-        0.7
-      ),
     {
       onSuccess: (content) => {
         setMessages((p) => {
@@ -203,7 +189,9 @@ export const AnalysisIdContainer = () => {
       setMessages((p) => {
         const newMessages = [
           ...p,
-          analysisData?.language === 'АНГЛИЙСКИЙ' ? defaultDialoguesEnglish : defaultDialogues,
+          analysisData?.language === "АНГЛИЙСКИЙ"
+            ? defaultDialoguesEnglish
+            : defaultDialogues,
         ];
 
         postAnalysisByCompanyId({
