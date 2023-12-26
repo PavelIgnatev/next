@@ -90,6 +90,11 @@ export const AnalysisIdContainer = () => {
           "кп ",
           "bot",
           "бот",
+          "zoom",
+          'зум',
+          'встреч',
+          'созвон',
+          'звонок'
         ],
         (dialog.content ?? "").toLowerCase()
       )
