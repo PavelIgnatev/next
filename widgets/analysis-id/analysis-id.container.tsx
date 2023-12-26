@@ -1,12 +1,21 @@
 import { useMutation, useQuery } from "react-query";
 import { useRouter } from "next/router";
 import { notification } from "antd";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import FrontendAnalysisApi from "../../api/frontend/analysis";
 import { AnalysisId } from "./analysis-id";
 import { makeRequestComplete } from "../../utils/makeRequestComplete";
-import { makeRequestGPT } from "../../utils/makeRequestGPT";
+
+function checkArrayForSubstring(arr: Array<string>, substring: string) {
+  for (let i = 0; i < arr.length; i++) {
+    if (substring.includes(arr[i])) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 const defaultDialogues = [
   {
@@ -68,7 +77,23 @@ export const AnalysisIdContainer = () => {
     }
   );
 
-  const { language = "РУССКИЙ" } = analysisData || {};
+  const hasPromo =
+    messages?.[dialogId]?.some((dialog) =>
+      checkArrayForSubstring(
+        [
+          "pdf",
+          "материа",
+          "промо",
+          "сайт",
+          "коммерческое",
+          "ссылк",
+          "кп ",
+          "bot",
+          "бот",
+        ],
+        (dialog.content ?? "").toLowerCase()
+      )
+    ) || false;
 
   const { mutate: postAnalysisByCompanyId } = useMutation(
     ({
@@ -96,6 +121,16 @@ export const AnalysisIdContainer = () => {
       }>
     ) =>
       makeRequestComplete(`
+    ИСТОРИЯ ДИАЛОГА:
+      ${[...dialogue]
+        .slice(-8)
+        .map(
+          (dialog) =>
+            `# ${dialog.role === "user" ? "Павел" : "Евгений"}: ${
+              dialog.content
+            }`
+        )
+        .join("\n")}
     ТВОЕ ИМЯ: Евгений
     ТВОЯ РОЛЬ: ${analysisData && analysisData.aiRole ? analysisData.aiRole : ""}
     ОПИСАНИЕ КОМПАНИИ: ${
@@ -103,22 +138,24 @@ export const AnalysisIdContainer = () => {
         ? analysisData.companyDescription
         : ""
     }
-    ЦЕЛЬ ДЛЯ Евгений: ответить на сообщениe(я) пользователя Павел, проявить у него интерес к предложению компании. ${
+    ${
+      hasPromo &&
+      `ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ: ${
+        analysisData && analysisData.addedInformation
+          ? analysisData.addedInformation
+          : ""
+      }`
+    }
+    ЦЕЛЬ ДЛЯ Евгений: ответить на сообщениe(я) пользователя Павел, проявить у него интерес к получению подробной информации. ${
       analysisData &&
       analysisData.goal &&
       dialogue.filter((e) => e.role === "user").length > 1
-        ? "В случае, если пользователь проявил активный интерес к предложению - твоей задачей является " +
+        ? "В случае, если пользователь проявил активный интерес к получению подробной информации - " +
           analysisData.goal
         : ""
-    }. Длина ответного сообщения должна составлять примерно 150-200 символов.
+    }.
 
-    ${[...dialogue]
-      .slice(-8)
-      .map(
-        (dialog) =>
-          `# ${dialog.role === "user" ? "Павел" : "Евгений"}: ${dialog.content}`
-      )
-      .join("\n")}
+    Верни сообщение ТОЛЬКО для пользователя Евгений, в котором будет содержаться основаная часть-отсылка на последний вопрос пользователя Павел с наводящим вопросом для продолжения общения.
     # Евгений:`),
     {
       onSuccess: (content) => {

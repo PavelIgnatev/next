@@ -4,7 +4,7 @@ function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export async function makeRequestComplete(prompt: string) {
+export async function makeRequestComplete(prompt: string, error = true) {
   while (true) {
     try {
       const response = await FrontendApi.generateComplete(prompt);
@@ -14,8 +14,6 @@ export async function makeRequestComplete(prompt: string) {
         throw new Error("Пустое сообщение");
       }
 
-      let pattern =
-        /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
       const message = data
         .replace("\n", "")
         .replace("\n", "")
@@ -24,14 +22,15 @@ export async function makeRequestComplete(prompt: string) {
         .replace("\n", "")
         .replace("\n", "")
         .replace("\n", "")
-        .replace(pattern, "")
         .trim();
 
       if (
         message.includes("[") ||
         message.includes("]") ||
         message.includes("(") ||
-        message.includes(")")
+        message.includes(")") ||
+        message.includes("{") ||
+        message.includes("}")
       ) {
         console.log(
           `\x1b[4mПотенциальное сообщение:\x1b[0m \x1b[36m${message}\x1b[0m`
@@ -39,27 +38,75 @@ export async function makeRequestComplete(prompt: string) {
         throw new Error("В ответе содержатся подозрительные символы");
       }
 
+      if (
+        error &&
+        (message.toLowerCase().includes("чем я") ||
+          message.toLowerCase().includes("могу помоч") ||
+          message.toLowerCase().includes("могу тебе") ||
+          message.toLowerCase().includes("тебе помоч") ||
+          message.toLowerCase().includes("конкретный вопрос") ||
+          message.toLowerCase().includes("конкретные вопрос") ||
+          message.toLowerCase().includes("готов на них") ||
+          message.toLowerCase().includes("готов помоч") ||
+          message.toLowerCase().includes("вопросы по данно") ||
+          message.toLowerCase().includes("вас какие-либо") ||
+          message.toLowerCase().includes("какие-либо вопрос") ||
+          message.toLowerCase().includes("какие вопро") ||
+          message.toLowerCase().includes("наших услуг") ||
+          message.toLowerCase().includes("по поводу услуг") ||
+          message.toLowerCase().includes("по поводу наших") ||
+          message.toLowerCase().includes("вопросы по это") ||
+          message.toLowerCase().includes("цели диалог") ||
+          message.toLowerCase().includes("цель диалог") ||
+          message.toLowerCase().includes("моя цел") ||
+          message.toLowerCase().includes("готов ответит") ||
+          message.toLowerCase().includes("них ответит") ||
+          message.toLowerCase().includes("чем могу") ||
+          message.toLowerCase().includes("полезен быть") ||
+          message.toLowerCase().includes("быть полезен") ||
+          message.toLowerCase().includes("пошло не так") ||
+          message.toLowerCase().includes("что-то пошло") ||
+          message.toLowerCase().includes("возникнут вопрос") ||
+          message.toLowerCase().includes("возникли у вас") ||
+          message.toLowerCase().includes("вас заинтересовало") ||
+          message.toLowerCase().includes("у вас возникли"))
+      ) {
+        console.log(
+          `\x1b[4mПотенциальное сообщение:\x1b[0m \x1b[36m${message}\x1b[0m`
+        );
+        throw new Error("В ответе содержатся подозретельные части сообщения");
+      }
+
       return capitalizeFirstLetter(
         message
           .replace("Привет, ", "")
+          .replace("Привет,", "")
+
           .replace("Привет! ", "")
           .replace("Привет!", "")
           .replace("Здравствуйте, ", "")
+          .replace("Здравствуйте,", "")
           .replace("Здравствуйте! ", "")
           .replace("Здравствуйте!", "")
           .replace("Приветствую, ", "")
+          .replace("Приветствую,", "")
+
           .replace("Приветствую! ", "")
           .replace("Приветствую!", "")
           .replace("Здравствуй, ", "")
+          .replace("Здравствуй,", "")
+
           .replace("Здравствуй! ", "")
           .replace("Здравствуй!", "")
           .replace("Доброе утро, ", "")
+          .replace("Доброе утро,", "")
+
           .replace("Доброе утро! ", "")
           .replace("Доброе утро!", "")
-          .replace("Добрый вечер, ", "")
+          .replace("Добрый вечер,", "")
           .replace("Добрый вечер! ", "")
           .replace("Добрый вечер!", "")
-          .replace("Добрый день, ", "")
+          .replace("Добрый день,", "")
           .replace("Добрый день! ", "")
           .replace("Добрый день!", "")
           .replace("Привет", "")
@@ -76,6 +123,31 @@ export async function makeRequestComplete(prompt: string) {
           .replace("доброе утро", "")
           .replace("добрый вечер", "")
           .replace("добрый день", "")
+          .replace("Hi,", "")
+          .replace("Hi! ", "")
+          .replace("Hi!", "")
+          .replace("Hi", "")
+          .replace("hi", "")
+          .replace("Hello,", "")
+          .replace("Hello! ", "")
+          .replace("Hello!", "")
+          .replace("Hello", "")
+          .replace("hello", "")
+          .replace("Good morning,", "")
+          .replace("Good morning! ", "")
+          .replace("Good morning!", "")
+          .replace("Good morning", "")
+          .replace("good morning", "")
+          .replace("Good evening,", "")
+          .replace("Good evening! ", "")
+          .replace("Good evening!", "")
+          .replace("Good evening", "")
+          .replace("good evening", "")
+          .replace("Good afternoon,", "")
+          .replace("Good afternoon! ", "")
+          .replace("Good afternoon!", "")
+          .replace("Good afternoon", "")
+          .replace("good afternoon", "")
       );
     } catch (error: any) {
       console.log(`Ошибка запроса. ${error.message}`);

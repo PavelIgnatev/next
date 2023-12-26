@@ -34,6 +34,7 @@ class FrontendAnalysisService {
       aiRole: string;
       companyName: string;
       companyDescription: string;
+      addedInformation: string;
       goal: string;
       dialogs: Array<{
         role: "user" | "assistant" | "system";

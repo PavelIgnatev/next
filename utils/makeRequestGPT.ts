@@ -15,11 +15,12 @@ export async function makeRequestGPT(
 ) {
   while (true) {
     try {
-      const response = await FrontendApi.generateMessages(dialogue, temperature);
+      const response = await FrontendApi.generateMessages(
+        dialogue,
+        temperature
+      );
       const { data } = response;
 
-      let pattern =
-        /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
       const message = data
         .replace("\n", "")
         .replace("\n", "")
@@ -27,10 +28,16 @@ export async function makeRequestGPT(
         .replace("\n", "")
         .replace("\n", "")
         .replace("\n", "")
-        .replace("\n", "")
-        .replace(pattern, "");
+        .replace("\n", "");
 
-      if (message.includes("[") || message.includes("]")) {
+      if (
+        message.includes("[") ||
+        message.includes("]") ||
+        message.includes("(") ||
+        message.includes(")") ||
+        message.includes("{") ||
+        message.includes("}")
+      ) {
         console.log(
           `\x1b[4mПотенциальное сообщение:\x1b[0m \x1b[36m${message}\x1b[0m`
         );
@@ -75,8 +82,10 @@ export async function makeRequestGPT(
           message.toLowerCase().includes("что-то пошло") ||
           message.toLowerCase().includes("you today") ||
           message.toLowerCase().includes("how can") ||
-          message.toLowerCase().includes("вызов") ||
-          message.toLowerCase().includes("i assist you"))
+          message.toLowerCase().includes("i assist you") ||
+          message.toLowerCase().includes("language") ||
+          message.toLowerCase().includes("transl") ||
+          message.toLowerCase().includes("discussi"))
       ) {
         console.log(
           `\x1b[4mПотенциальное сообщение:\x1b[0m \x1b[36m${message}\x1b[0m`
@@ -88,26 +97,74 @@ export async function makeRequestGPT(
         return capitalizeFirstLetter(
           message
             .replace("Привет, ", "")
+            .replace("Привет,", "")
+
             .replace("Привет! ", "")
             .replace("Привет!", "")
             .replace("Здравствуйте, ", "")
+            .replace("Здравствуйте,", "")
             .replace("Здравствуйте! ", "")
             .replace("Здравствуйте!", "")
             .replace("Приветствую, ", "")
+            .replace("Приветствую,", "")
+
             .replace("Приветствую! ", "")
             .replace("Приветствую!", "")
             .replace("Здравствуй, ", "")
+            .replace("Здравствуй,", "")
+
             .replace("Здравствуй! ", "")
             .replace("Здравствуй!", "")
             .replace("Доброе утро, ", "")
+            .replace("Доброе утро,", "")
+
             .replace("Доброе утро! ", "")
             .replace("Доброе утро!", "")
-            .replace("Добрый вечер, ", "")
+            .replace("Добрый вечер,", "")
             .replace("Добрый вечер! ", "")
             .replace("Добрый вечер!", "")
-            .replace("Добрый день, ", "")
+            .replace("Добрый день,", "")
             .replace("Добрый день! ", "")
             .replace("Добрый день!", "")
+            .replace("Привет", "")
+            .replace("Здравствуйте", "")
+            .replace("Приветствую", "")
+            .replace("Здравствуй", "")
+            .replace("Доброе утро", "")
+            .replace("Добрый вечер", "")
+            .replace("Добрый день", "")
+            .replace("привет", "")
+            .replace("здравствуйте", "")
+            .replace("приветствую", "")
+            .replace("здравствуй", "")
+            .replace("доброе утро", "")
+            .replace("добрый вечер", "")
+            .replace("добрый день", "")
+            .replace("Hi,", "")
+            .replace("Hi! ", "")
+            .replace("Hi!", "")
+            .replace("Hi", "")
+            .replace("hi", "")
+            .replace("Hello,", "")
+            .replace("Hello! ", "")
+            .replace("Hello!", "")
+            .replace("Hello", "")
+            .replace("hello", "")
+            .replace("Good morning,", "")
+            .replace("Good morning! ", "")
+            .replace("Good morning!", "")
+            .replace("Good morning", "")
+            .replace("good morning", "")
+            .replace("Good evening,", "")
+            .replace("Good evening! ", "")
+            .replace("Good evening!", "")
+            .replace("Good evening", "")
+            .replace("good evening", "")
+            .replace("Good afternoon,", "")
+            .replace("Good afternoon! ", "")
+            .replace("Good afternoon!", "")
+            .replace("Good afternoon", "")
+            .replace("good afternoon", "")
         );
       }
 
