@@ -34,26 +34,13 @@ const rules = [
 export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
   const { loading = false, onFinish, onFinishFailed } = props;
 
-  const validateGoalRule = (_: RuleObject, value: string) => {
-    if (
-      !value ||
-      (!value.includes("Получить согласие") &&
-        !value.includes("Obtain consent"))
-    ) {
-      return Promise.reject(
-        new Error('Фраза "Получить согласие" или "Obtain consent" обязательна!')
-      );
-    }
-    return Promise.resolve();
-  };
-
   return (
     <Form
       name="basic"
       layout="vertical"
       className={classes.analysisCreateForm}
       onFinish={onFinish}
-      initialValues={{ goal: "Получить согласие на", language: "РУССКИЙ" }}
+      initialValues={{ language: "РУССКИЙ" }}
       onFinishFailed={onFinishFailed}
     >
       <Form.Item
@@ -71,19 +58,10 @@ export const AnalysisCreateForm = (props: AnalysisCreateFormProps) => {
         name="companyDescription"
         rules={rules}
       >
-        <TextArea style={{ height: 80, resize: "none" }} maxLength={300} />
+        <TextArea style={{ height: 80, resize: "none" }} maxLength={1000} />
       </Form.Item>
-      <Form.Item
-        label="Целевое действие"
-        name="goal"
-        rules={[
-          ...rules,
-          {
-            validator: validateGoalRule,
-          },
-        ]}
-      >
-        <TextArea style={{ height: 80, resize: "none" }} maxLength={300} />
+      <Form.Item label="Целевое действие" name="goal" rules={[...rules]}>
+        <TextArea style={{ height: 80, resize: "none" }} maxLength={1000} />
       </Form.Item>
       <Form.Item label="Язык разбора" name="language" rules={[rules[0]]}>
         <Select defaultValue="РУССКИЙ">
