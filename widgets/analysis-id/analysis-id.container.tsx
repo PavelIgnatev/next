@@ -127,18 +127,10 @@ export const AnalysisIdContainer = () => {
       }>
     ) =>
       makeRequestComplete(`
-    ИСТОРИЯ ДИАЛОГА:
-      ${[...dialogue]
-        .slice(-8)
-        .map(
-          (dialog) =>
-            `# ${dialog.role === "user" ? "Павел" : "Евгений"}: ${
-              dialog.content
-            }`
-        )
-        .join("\n")}
     ТВОЕ ИМЯ: Евгений
-    ТВОЯ РОЛЬ: ${analysisData && analysisData.aiRole ? analysisData.aiRole : ""}
+    РОЛЬ 'Евгений': ${
+      analysisData && analysisData.aiRole ? analysisData.aiRole : ""
+    }
     ОПИСАНИЕ КОМПАНИИ: ${
       analysisData && analysisData.companyDescription
         ? analysisData.companyDescription
@@ -152,14 +144,21 @@ export const AnalysisIdContainer = () => {
           : ""
       }`
     }
-    ЦЕЛЬ ДЛЯ Евгений: ответить на сообщениe(я) пользователя Павел, проявить у него интерес к получению подробной информации о предложении компании (смотри в ОПИСАНИЕ КОМПАНИИ)${
+    ЦЕЛЬ ДЛЯ 'Евгений': ответить на последнее сообщениe пользователя 'Павел', проявить у пользователя 'Павел' интерес к предложению компании (смотри в ОПИСАНИЕ КОМПАНИИ). ${
       analysisData &&
       analysisData.goal &&
       dialogue.filter((e) => e.role === "user").length > 1
-        ? "В случае, если пользователь проявил активный интерес к получению подробной информации - " +
+        ? "В случае, если пользователь проявил активный интерес к предложению - " +
           analysisData.goal
         : ""
-    }.
+    }
+    ${[...dialogue]
+      .slice(-8)
+      .map(
+        (dialog) =>
+          `# ${dialog.role === "user" ? "Павел" : "Евгений"}: ${dialog.content}`
+      )
+      .join("\n")}
     # Евгений:`),
     {
       onSuccess: (content) => {
